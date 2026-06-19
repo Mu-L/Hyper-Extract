@@ -14,12 +14,12 @@ from .schemas import (
 
 def resolve_merge_strategy(strategy_name: VALID_MERGE_STRATEGIES) -> MergeStrategy:
     """Resolve merge strategy from string to MergeStrategy enum."""
-    if "llm" in strategy_name:
-        parts = strategy_name.split("_")
-        if len(parts) == 2 and parts[0] in ["llm"]:
-            return getattr(getattr(MergeStrategy, parts[0].upper()), parts[1].upper())
-    else:
-        return MergeStrategy[strategy_name.upper()]
+    if strategy_name.startswith("llm_"):
+        # Map every "llm_*" variant onto the nested MergeStrategy.LLM member,
+        # e.g. "llm_balanced" -> MergeStrategy.LLM.BALANCED,
+        #      "llm_prefer_incoming" -> MergeStrategy.LLM.PREFER_INCOMING.
+        return getattr(MergeStrategy.LLM, strategy_name[len("llm_") :].upper())
+    return MergeStrategy[strategy_name.upper()]
 
 
 class Options(BaseModel):
