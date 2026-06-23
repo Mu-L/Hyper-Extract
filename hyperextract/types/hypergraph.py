@@ -631,11 +631,14 @@ class AutoHypergraph(
                 logger.warning("stage=merge_batch_empty_tuple nodes_and_edges_empty")
                 return self.graph_schema(nodes=[], edges=[])
 
-            if nodes_lists:
+            # Guard against an empty first chunk: nodes_lists[0] (or edges_lists[0])
+            # can be an empty list when a chunk produced no nodes/edges, so
+            # indexing [0][0] without the inner check raises IndexError.
+            if nodes_lists and nodes_lists[0]:
                 assert isinstance(nodes_lists[0][0], self.node_schema), (
                     "Invalid node list format for batch merging"
                 )
-            if edges_lists:
+            if edges_lists and edges_lists[0]:
                 assert isinstance(edges_lists[0][0], self.edge_schema), (
                     "Invalid edge list format for batch merging"
                 )
