@@ -267,11 +267,13 @@ class HyperGraph_RAG(AutoHypergraph[NodeSchema, EdgeSchema]):
 
         for raw_hyperedges in raw_hyperedges_list:
             cur_nodes, cur_edges = [], []
-            data_list = raw_hyperedges.items
-            for data in data_list:
-                data: EdgeSchema
-                cur_nodes.extend(data.related_entities)
-                cur_edges.append(data)
+            # batch()/invoke() can return None for a chunk when LLM extraction
+            # fails; guard before accessing .items (matches Atom / iText2KG_Star).
+            if raw_hyperedges and raw_hyperedges.items:
+                for data in raw_hyperedges.items:
+                    data: EdgeSchema
+                    cur_nodes.extend(data.related_entities)
+                    cur_edges.append(data)
             all_nodes_list.append(cur_nodes)
             all_edges_list.append(cur_edges)
 
