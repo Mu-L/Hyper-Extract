@@ -433,7 +433,7 @@ class Atom(AutoGraph[NodeSchema, EdgeSchema]):
             Atom_FACTOID_EXTRACTION_PROMPT
         )
         fact_chain = fact_prompt_template | self.llm_client.with_structured_output(
-            AtomicFactSchema
+            AtomicFactSchema, method="function_calling"
         )
 
         # 3. Batch Extract Facts

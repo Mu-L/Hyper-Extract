@@ -76,7 +76,9 @@ class BaseAutoType(ABC, Generic[T]):
         self.prompt_template = ChatPromptTemplate.from_template(self.prompt)
         self.data_extractor = (
             self.prompt_template
-            | self.llm_client.with_structured_output(self._data_schema)
+            | self.llm_client.with_structured_output(
+                self._data_schema, method="function_calling"
+            )
         )
 
         # Initialize text splitter for chunking long documents
