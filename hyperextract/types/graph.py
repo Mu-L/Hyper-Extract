@@ -316,13 +316,17 @@ class AutoGraph(
         self.prompt_template = ChatPromptTemplate.from_template(self.node_prompt)
         self.node_extractor = (
             self.prompt_template
-            | self.llm_client.with_structured_output(self.node_list_schema)
+            | self.llm_client.with_structured_output(
+                self.node_list_schema, method="function_calling"
+            )
         )
 
         self.edge_prompt_template = ChatPromptTemplate.from_template(self.edge_prompt)
         self.edge_extractor = (
             self.edge_prompt_template
-            | self.llm_client.with_structured_output(self.edge_list_schema)
+            | self.llm_client.with_structured_output(
+                self.edge_list_schema, method="function_calling"
+            )
         )
 
     def _default_prompt(self) -> str:
