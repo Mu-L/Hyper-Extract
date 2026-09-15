@@ -48,19 +48,12 @@ Point your MCP client at the `he-mcp` command. For a Claude Desktop–style conf
 | `export_obsidian` | Export a KA to an Obsidian vault | — | embedder |
 | `export_graphml` | Export a KA to GraphML (same as `he export graphml`) | — | embedder |
 | `export_csv` | Export a KA to CSV tables (same as `he export csv`) | — | embedder |
-<<<<<<< HEAD
+| `export_jsonld` | Export a KA to JSON-LD (same as `he export jsonld`) | — | embedder |
 | `export_cypher` | Export a KA to Cypher (same as `he export cypher`) | — | embedder |
 
 All tools take a `ka_path` (a directory created by `he parse`). `search`/`ask` require an index — build it with [`he build-index`](cli/commands/build-index.md).
 
-> `export_obsidian` requires the Obsidian export feature (see [`he export obsidian`](cli/commands/export.md)). If it is unavailable, the tool returns an explanatory message instead of failing. `export_graphml` / `export_csv` / `export_cypher` use the same exporters as the CLI (see [`he export`](cli/commands/export.md)).
-=======
-| `export_jsonld` | Export a KA to JSON-LD (same as `he export jsonld`) | — | embedder |
-
-All tools take a `ka_path` (a directory created by `he parse`). `search`/`ask` require an index — build it with [`he build-index`](cli/commands/build-index.md).
-
-> `export_obsidian` requires the Obsidian export feature (see [`he export obsidian`](cli/commands/export.md)). If it is unavailable, the tool returns an explanatory message instead of failing. `export_graphml` / `export_csv` / `export_jsonld` use the same exporters as the CLI (see [`he export`](cli/commands/export.md)).
->>>>>>> origin/main
+> `export_obsidian` requires the Obsidian export feature (see [`he export obsidian`](cli/commands/export.md)). If it is unavailable, the tool returns an explanatory message instead of failing. `export_graphml` / `export_csv` / `export_jsonld` / `export_cypher` use the same exporters as the CLI (see [`he export`](cli/commands/export.md)).
 
 ---
 
@@ -75,4 +68,8 @@ ask(ka_path="./tesla_kb",
     question="Who were Tesla's rivals?")  → "Thomas Edison ..."
 export_obsidian(ka_path="./tesla_kb",
                 output="./vault")          → "Exported 49 notes to ./vault"
+export_jsonld(ka_path="./tesla_kb",
+              output="./tesla.jsonld")     → "Exported JSON-LD to ./tesla.jsonld"
+export_cypher(ka_path="./tesla_kb",
+              output="./tesla.cypher")     → "Exported Cypher to ./tesla.cypher"
 ```

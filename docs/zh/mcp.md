@@ -48,19 +48,12 @@ python -m hyperextract.mcp_server
 | `export_obsidian` | 将 KA 导出为 Obsidian 知识库 | — | 嵌入器 |
 | `export_graphml` | 将 KA 导出为 GraphML（同 `he export graphml`） | — | 嵌入器 |
 | `export_csv` | 将 KA 导出为 CSV 表（同 `he export csv`） | — | 嵌入器 |
-<<<<<<< HEAD
+| `export_jsonld` | 将 KA 导出为 JSON-LD（同 `he export jsonld`） | — | 嵌入器 |
 | `export_cypher` | 将 KA 导出为 Cypher（同 `he export cypher`） | — | 嵌入器 |
 
 所有工具都接受一个 `ka_path`（由 `he parse` 创建的目录）。`search`/`ask` 需要索引——用 [`he build-index`](cli/commands/build-index.md) 构建。
 
-> `export_obsidian` 依赖 Obsidian 导出功能（见 [`he export obsidian`](cli/commands/export.md)）。若不可用，该工具会返回说明信息而不会报错。`export_graphml` / `export_csv` / `export_cypher` 使用与 CLI 相同的导出器（见 [`he export`](cli/commands/export.md)）。
-=======
-| `export_jsonld` | 将 KA 导出为 JSON-LD（同 `he export jsonld`） | — | 嵌入器 |
-
-所有工具都接受一个 `ka_path`（由 `he parse` 创建的目录）。`search`/`ask` 需要索引——用 [`he build-index`](cli/commands/build-index.md) 构建。
-
-> `export_obsidian` 依赖 Obsidian 导出功能（见 [`he export obsidian`](cli/commands/export.md)）。若不可用，该工具会返回说明信息而不会报错。`export_graphml` / `export_csv` / `export_jsonld` 使用与 CLI 相同的导出器（见 [`he export`](cli/commands/export.md)）。
->>>>>>> origin/main
+> `export_obsidian` 依赖 Obsidian 导出功能（见 [`he export obsidian`](cli/commands/export.md)）。若不可用，该工具会返回说明信息而不会报错。`export_graphml` / `export_csv` / `export_jsonld` / `export_cypher` 使用与 CLI 相同的导出器（见 [`he export`](cli/commands/export.md)）。
 
 ---
 
@@ -75,4 +68,8 @@ ask(ka_path="./tesla_kb",
     question="Who were Tesla's rivals?")  → "Thomas Edison ..."
 export_obsidian(ka_path="./tesla_kb",
                 output="./vault")          → "Exported 49 notes to ./vault"
+export_jsonld(ka_path="./tesla_kb",
+              output="./tesla.jsonld")     → "Exported JSON-LD to ./tesla.jsonld"
+export_cypher(ka_path="./tesla_kb",
+              output="./tesla.cypher")     → "Exported Cypher to ./tesla.cypher"
 ```
