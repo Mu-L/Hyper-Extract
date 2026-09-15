@@ -137,9 +137,11 @@ he list method | grep -q light_rag && echo "Available"
 |---------|-----------|---------|
 | **目的** | 特定领域提取 | 通用算法 |
 | **配置** | 预配置提示 | 算法参数 |
-| **语言** | 多语言支持 | 仅英文 |
+| **语言** | 多语言支持 | 描述目前只有英文（`--lang zh` 下列表仍会显示这些行） |
 | **用例** | 快速开始、领域任务 | 研究、定制 |
 | **示例** | `finance/earnings_summary` | `light_rag` |
+
+`he list template --lang zh` 仍会列出 `method/*`。方法描述目前只有英文；`--no-methods` 在任意语言下都会隐藏它们。
 
 ---
 

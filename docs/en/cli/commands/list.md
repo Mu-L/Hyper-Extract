@@ -137,9 +137,11 @@ he list method | grep -q light_rag && echo "Available"
 |---------|-----------|---------|
 | **Purpose** | Domain-specific extraction | General algorithms |
 | **Configuration** | Pre-configured prompts | Algorithm parameters |
-| **Language** | Multi-language support | English only |
+| **Language** | Multi-language support | Descriptions are English only (rows still appear under `--lang zh`) |
 | **Use case** | Quick start, domain tasks | Research, customization |
 | **Example** | `finance/earnings_summary` | `light_rag` |
+
+`he list template --lang zh` still includes `method/*` rows. Method descriptions are currently English-only; `--no-methods` hides them in every language.
 
 ---
 

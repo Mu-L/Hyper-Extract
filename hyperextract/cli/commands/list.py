@@ -69,7 +69,7 @@ def template(
             )
             templates.append((path, cfg.type, _get_description(cfg, lang)))
 
-    if include_methods and target_lang != "zh":
+    if include_methods:
         from hyperextract.methods import list_method_cfgs
 
         method_templates = list_method_cfgs()
