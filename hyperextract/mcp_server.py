@@ -76,6 +76,17 @@ def _load_ka(ka_path: str):
     return ka
 
 
+_LOAD_ERRORS = (FileNotFoundError, ValueError, OSError, ImportError)
+
+
+def _safe_load_ka(ka_path: str):
+    """Load a KA, or return an explanation string (never raise)."""
+    try:
+        return _load_ka(ka_path)
+    except _LOAD_ERRORS as exc:
+        return f"Cannot load KA: {exc}"
+
+
 def _dump(obj: Any) -> str:
     return json.dumps(obj, ensure_ascii=False, indent=2, default=str)
 
@@ -220,7 +231,9 @@ def search(ka_path: str, query: str, top_k: int = 5) -> str:
     """
     from hyperextract.utils.search_results import coerce_search_results
 
-    ka = _load_ka(ka_path)
+    ka = _safe_load_ka(ka_path)
+    if isinstance(ka, str):
+        return ka
     try:
         results = ka.search(query, top_k=top_k)
     except ValueError as e:
@@ -239,7 +252,9 @@ def ask(ka_path: str, question: str, top_k: int = 5) -> str:
 
     Returns the generated answer. The KA must have an index.
     """
-    ka = _load_ka(ka_path)
+    ka = _safe_load_ka(ka_path)
+    if isinstance(ka, str):
+        return ka
     try:
         response = ka.chat(question, top_k=top_k)
     except ValueError as e:
@@ -263,7 +278,9 @@ def export_obsidian(
 
     Returns a summary of how many notes were written.
     """
-    ka = _load_ka(ka_path)
+    ka = _safe_load_ka(ka_path)
+    if isinstance(ka, str):
+        return ka
     if not hasattr(ka, "export_obsidian"):
         return (
             "Obsidian export is only supported for graph-type knowledge abstracts "
@@ -292,7 +309,9 @@ def export_graphml(ka_path: str, output: str, overwrite: bool = False) -> str:
     from hyperextract.utils.exporters import GraphMLHypergraphError
     from hyperextract.utils.exporters.ka import GraphTypeError, export_ka_graphml
 
-    ka = _load_ka(ka_path)
+    ka = _safe_load_ka(ka_path)
+    if isinstance(ka, str):
+        return ka
     try:
         dest = export_ka_graphml(ka, output, overwrite=overwrite)
     except GraphTypeError as e:
@@ -321,7 +340,9 @@ def export_csv(ka_path: str, output: str, overwrite: bool = False) -> str:
         is_hypergraph_ka,
     )
 
-    ka = _load_ka(ka_path)
+    ka = _safe_load_ka(ka_path)
+    if isinstance(ka, str):
+        return ka
     hypergraph = is_hypergraph_ka(ka)
     try:
         dest = export_ka_csv(ka, output, overwrite=overwrite)
@@ -346,7 +367,9 @@ def export_jsonld(ka_path: str, output: str, overwrite: bool = False) -> str:
     """
     from hyperextract.utils.exporters.ka import GraphTypeError, export_ka_jsonld
 
-    ka = _load_ka(ka_path)
+    ka = _safe_load_ka(ka_path)
+    if isinstance(ka, str):
+        return ka
     try:
         dest = export_ka_jsonld(ka, output, overwrite=overwrite)
     except GraphTypeError as e:
@@ -369,7 +392,9 @@ def export_cypher(ka_path: str, output: str, overwrite: bool = False) -> str:
     """
     from hyperextract.utils.exporters.ka import GraphTypeError, export_ka_cypher
 
-    ka = _load_ka(ka_path)
+    ka = _safe_load_ka(ka_path)
+    if isinstance(ka, str):
+        return ka
     try:
         dest = export_ka_cypher(ka, output, overwrite=overwrite)
     except GraphTypeError as e:

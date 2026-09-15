@@ -420,6 +420,108 @@ def test_export_cypher_rejects_non_graph(monkeypatch, tmp_path):
 
 
 # ---------------------------------------------------------------------------
+# search / ask / export — load failures must return strings, not raise
+# ---------------------------------------------------------------------------
+
+
+def _mcp_load_tools(ka_path: str, dest):
+    return (
+        ("search", lambda: mcp_server.search(ka_path, "q")),
+        ("ask", lambda: mcp_server.ask(ka_path, "q")),
+        (
+            "export_obsidian",
+            lambda: mcp_server.export_obsidian(ka_path, str(dest / "vault")),
+        ),
+        (
+            "export_graphml",
+            lambda: mcp_server.export_graphml(ka_path, str(dest / "g.graphml")),
+        ),
+        ("export_csv", lambda: mcp_server.export_csv(ka_path, str(dest / "csv"))),
+        (
+            "export_jsonld",
+            lambda: mcp_server.export_jsonld(ka_path, str(dest / "g.jsonld")),
+        ),
+        (
+            "export_cypher",
+            lambda: mcp_server.export_cypher(ka_path, str(dest / "g.cypher")),
+        ),
+    )
+
+
+@pytest.mark.parametrize(
+    "tool_name",
+    [
+        "search",
+        "ask",
+        "export_obsidian",
+        "export_graphml",
+        "export_csv",
+        "export_jsonld",
+        "export_cypher",
+    ],
+)
+def test_load_missing_path_returns_string(tmp_path, tool_name):
+    tools = dict(_mcp_load_tools(str(tmp_path / "nope"), tmp_path / "out"))
+    out = tools[tool_name]()
+    assert isinstance(out, str)
+    assert out.startswith("Cannot load KA:")
+
+
+@pytest.mark.parametrize(
+    "tool_name",
+    [
+        "search",
+        "ask",
+        "export_obsidian",
+        "export_graphml",
+        "export_csv",
+        "export_jsonld",
+        "export_cypher",
+    ],
+)
+def test_load_dir_without_data_json_returns_string(tmp_path, tool_name):
+    empty = tmp_path / "empty_ka"
+    empty.mkdir()
+    tools = dict(_mcp_load_tools(str(empty), tmp_path / "out"))
+    out = tools[tool_name]()
+    assert isinstance(out, str)
+    assert out.startswith("Cannot load KA:")
+    assert "data.json" in out
+
+
+@pytest.mark.parametrize(
+    "tool_name",
+    [
+        "search",
+        "ask",
+        "export_obsidian",
+        "export_graphml",
+        "export_csv",
+        "export_jsonld",
+        "export_cypher",
+    ],
+)
+def test_load_client_error_returns_string(tmp_path, monkeypatch, tool_name):
+    ka = tmp_path / "ka"
+    ka.mkdir()
+    (ka / "data.json").write_text("{}", encoding="utf-8")
+    (ka / "metadata.json").write_text(
+        json.dumps({"template": "general/base_graph", "lang": "en"}),
+        encoding="utf-8",
+    )
+
+    def _boom():
+        raise ValueError("LLM API key is not configured")
+
+    monkeypatch.setattr(mcp_server, "_get_clients", _boom)
+    tools = dict(_mcp_load_tools(str(ka), tmp_path / "out"))
+    out = tools[tool_name]()
+    assert isinstance(out, str)
+    assert out.startswith("Cannot load KA:")
+    assert "not configured" in out
+
+
+# ---------------------------------------------------------------------------
 # FastMCP wiring (needs the optional `mcp` package)
 # ---------------------------------------------------------------------------
 
