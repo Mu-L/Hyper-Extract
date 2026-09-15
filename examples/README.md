@@ -72,6 +72,7 @@ examples/
 │   ├── methods/               # RAG method demos
 │   │   ├── atom_demo.py
 │   │   ├── cog_rag_demo.py
+│   │   ├── chunk_vs_graph_rag.py  # Tesla side-by-side (not a benchmark)
 │   │   ├── graph_rag_demo.py
 │   │   ├── hyper_rag_demo.py
 │   │   ├── hypergraph_rag_demo.py
@@ -138,6 +139,12 @@ Each demo showcases a specific extraction type:
 | `hypergraph_demo.py` | Extract multi-entity relationships |
 
 ## Data Files
+
+Side-by-side `chunk_rag` vs `graph_rag` on this corpus (manual demo, not CI):
+
+```bash
+python en/methods/chunk_vs_graph_rag.py
+```
 
 ### Tesla (en/tesla.md)
 Nikola Tesla biography (1856-1943):

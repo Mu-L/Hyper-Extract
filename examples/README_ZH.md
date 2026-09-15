@@ -73,6 +73,7 @@ examples/
 │   ├── methods/               # RAG 方法演示
 │   │   ├── atom_demo.py
 │   │   ├── cog_rag_demo.py
+│   │   ├── chunk_vs_graph_rag.py  # Tesla 对照（不是 benchmark）
 │   │   ├── graph_rag_demo.py
 │   │   ├── hyper_rag_demo.py
 │   │   ├── hypergraph_rag_demo.py
@@ -139,6 +140,12 @@ examples/
 | `hypergraph_demo.py` | 提取多实体关系 |
 
 ## 数据文件
+
+`chunk_rag` 与 `graph_rag` 的对照脚本语料是英文的 `examples/en/tesla.md`（不是评测，CI 不会跑）：
+
+```bash
+python en/methods/chunk_vs_graph_rag.py
+```
 
 ### Tesla (en/tesla.md)
 尼古拉·特斯拉传记（1856-1943）：
