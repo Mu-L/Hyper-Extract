@@ -396,6 +396,7 @@ class Atom(AutoGraph[NodeSchema, EdgeSchema]):
             max_workers=max_workers,
             verbose=verbose,
         )
+        self.metadata["observation_time"] = self.observation_time
 
     # ==================== Extraction Pipeline ====================
 

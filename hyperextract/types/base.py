@@ -739,6 +739,16 @@ class BaseAutoType(ABC, Generic[T]):
                     pass
 
         self.metadata.update(params)
+        self._restore_observation_context()
+
+    def _restore_observation_context(self) -> None:
+        """Copy persisted observation fields back onto instance attributes."""
+        if "observation_time" in self.metadata and hasattr(self, "observation_time"):
+            self.observation_time = self.metadata["observation_time"]
+        if "observation_location" in self.metadata and hasattr(
+            self, "observation_location"
+        ):
+            self.observation_location = self.metadata["observation_location"]
 
     @abstractmethod
     def dump_index(self, folder_path: str | Path) -> None:

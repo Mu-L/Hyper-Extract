@@ -261,6 +261,8 @@ class AutoSpatioTemporalGraph(AutoGraph[NodeSchema, EdgeSchema]):
             edge_fields_for_index=edge_fields_for_index,
             **kwargs,
         )
+        self.metadata["observation_time"] = self.observation_time
+        self.metadata["observation_location"] = self.observation_location
 
     # ==============================================================================
     # Override Extraction Methods to Dynamically Inject Context

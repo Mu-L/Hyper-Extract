@@ -262,6 +262,7 @@ class AutoTemporalGraph(AutoGraph[NodeSchema, EdgeSchema]):
             edge_fields_for_index=edge_fields_for_index,
             **kwargs,
         )
+        self.metadata["observation_time"] = self.observation_time
 
     # ==============================================================================
     # Override Extraction Methods to Dynamically Inject Observation Date
