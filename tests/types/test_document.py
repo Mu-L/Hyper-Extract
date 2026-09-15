@@ -82,6 +82,23 @@ class TestSearch:
         # The untagged source is excluded from the same query.
         assert all("Alpha" not in c.content for c in results)
 
+    def test_chat_forwards_scope_to_search(self, ka):
+        from langchain_core.messages import AIMessage
+        from langchain_core.runnables import RunnableLambda
+
+        seen = {}
+
+        def _spy(query, top_k=3, **kwargs):
+            seen["source_ids"] = kwargs.get("source_ids")
+            seen["tags"] = kwargs.get("tags")
+            return []
+
+        ka.search = _spy
+        ka.llm_client = RunnableLambda(lambda _: AIMessage(content="ok"))
+        ka.chat("q", source_ids=["s1"], tags=["t1"])
+        assert seen["source_ids"] == ["s1"]
+        assert seen["tags"] == ["t1"]
+
 
 class TestUpsertAndRollback:
     def test_upsert_replaces_old_chunks(self, ka):

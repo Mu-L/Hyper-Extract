@@ -23,6 +23,8 @@ he talk KA_PATH [OPTIONS]
 | `--query` | `-q` | 要问的单个问题 |
 | `--top-k` | `-n` | 要检索的上下文项目数量 | 3 |
 | `--interactive` | `-i` | 进入交互式聊天模式 |
+| `--source` | — | 范围限定：仅使用这些来源文档贡献的知识（可重复） |
+| `--tag` | — | 范围限定：仅使用带有这些标签的来源贡献的知识（可重复） |
 
 ---
 
@@ -110,6 +112,24 @@ Other useful commands:
 ```bash
 he talk ./output/ -q "解释电流战争" -n 10
 ```
+
+---
+
+## 范围限定对话
+
+用 `--source`（指定来源文档）或 `--tag`（带有该标签的任意来源 —— 标签用 [`he tag`](tag.md) 管理）把生成答案限定到部分来源，过滤条件与 [`he search`](search.md) 相同：
+
+```bash
+# 只根据带有 `legal` 标签的来源作答
+he talk ./ka/ -q "终止条件是什么？" --tag legal
+
+# 只根据两份指定文档作答
+he talk ./ka/ -q "终止条件是什么？" --source contract-2024 --source annex-b
+```
+
+`--source` 与 `--tag` 以并集方式组合：只要某个键的**任一**贡献来源满足任一过滤条件，该键即匹配。交互模式（`-i`）每一轮都沿用同一范围。
+
+> 范围限定要求知识库在摄入时带有 `--source`，这样来源台账才会存在 —— 见[来源标注与溯源](../../python/guides/provenance.md)。没有台账的类型（例如 AutoList / AutoModel）遇到 `--source` / `--tag` 会以 scoped-chat 错误退出。
 
 ---
 

@@ -544,7 +544,14 @@ class BaseAutoType(ABC, Generic[T]):
             List of relevant knowledge items.
         """
 
-    def chat(self, query: str, top_k: int = 3) -> AIMessage:
+    def chat(
+        self,
+        query: str,
+        top_k: int = 3,
+        *,
+        source_ids: list[str] | None = None,
+        tags: list[str] | None = None,
+    ) -> AIMessage:
         """Performs a chat-like interaction with the knowledge abstract.
 
         This generic method retrieves relevant items and generates a response.
@@ -554,12 +561,22 @@ class BaseAutoType(ABC, Generic[T]):
         Args:
             query: User query string.
             top_k: Number of relevant items to retrieve (default: 3).
+            source_ids: Optional scope forwarded to search() when the type accepts it.
+            tags: Optional scope forwarded to search() when the type accepts it.
 
         Returns:
             An AIMessage object containing the LLM-generated response.
         """
+        import inspect
+
         # Step 1: Retrieve relevant items from knowledge abstract
-        search_results = self.search(query, top_k)
+        search_kwargs: dict[str, Any] = {}
+        search_params = inspect.signature(type(self).search).parameters
+        if "source_ids" in search_params:
+            search_kwargs["source_ids"] = source_ids
+        if "tags" in search_params:
+            search_kwargs["tags"] = tags
+        search_results = self.search(query, top_k, **search_kwargs)
 
         # Step 2: Format context from retrieved items
         formatted_context = []

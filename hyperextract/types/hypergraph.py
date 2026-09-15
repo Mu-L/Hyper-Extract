@@ -654,6 +654,9 @@ class AutoHypergraph(
         top_k_nodes: int = 3,
         top_k_edges: int = 3,
         top_k: int | None = None,
+        *,
+        source_ids: list[str] | None = None,
+        tags: list[str] | None = None,
     ) -> AIMessage:
         """Performs a chat-like interaction using hypergraph knowledge.
 
@@ -665,6 +668,8 @@ class AutoHypergraph(
             top_k_nodes: Number of relevant nodes to retrieve (default: 3). Set to 0 to disable node context.
             top_k_edges: Number of relevant hyperedges to retrieve (default: 3). Set to 0 to disable edge context.
             top_k: If provided, sets both top_k_nodes and top_k_edges to this value.
+            source_ids: Optional scope — only nodes/edges contributed by these source documents.
+            tags: Optional scope — only nodes/edges from sources carrying these tags.
 
         Returns:
             An AIMessage object containing the LLM-generated response.
@@ -689,7 +694,9 @@ class AutoHypergraph(
         # Step 2: Retrieve and format nodes context
         nodes = []
         if top_k_nodes > 0:
-            nodes = self.search_nodes(query, top_k=top_k_nodes)
+            nodes = self.search_nodes(
+                query, top_k=top_k_nodes, source_ids=source_ids, tags=tags
+            )
             if nodes:
                 context_parts.append("=== Relevant Nodes ===")
                 for node in nodes:
@@ -701,7 +708,9 @@ class AutoHypergraph(
         # Step 3: Retrieve and format edges context
         edges = []
         if top_k_edges > 0:
-            edges = self.search_edges(query, top_k=top_k_edges)
+            edges = self.search_edges(
+                query, top_k=top_k_edges, source_ids=source_ids, tags=tags
+            )
             if edges:
                 context_parts.append("=== Relevant Edges ===")
                 for edge in edges:

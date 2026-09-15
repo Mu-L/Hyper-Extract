@@ -119,6 +119,18 @@ response = result.chat(
 )
 ```
 
+### Scoped chat
+
+`ka.chat()` accepts the same optional `source_ids` / `tags` as `search()`. Graph types forward them to `search_nodes` / `search_edges`. Types whose `search()` has those names (document / set / graph family) honor the scope; AutoList / AutoModel ignore them instead of raising `TypeError`.
+
+```python
+response = result.chat(
+    "What are the termination conditions?",
+    source_ids=["contract-2024"],
+    tags=["legal"],
+)
+```
+
 ### Chat Use Cases
 
 ```python

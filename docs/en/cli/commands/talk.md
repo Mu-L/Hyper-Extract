@@ -23,6 +23,8 @@ he talk KA_PATH [OPTIONS]
 | `--query` | `-q` | Single question to ask |
 | `--top-k` | `-n` | Number of context items to retrieve | 3 |
 | `--interactive` | `-i` | Enter interactive chat mode |
+| `--source` | — | Scope: only knowledge contributed by these source documents (repeatable) |
+| `--tag` | — | Scope: only knowledge from sources carrying these tags (repeatable) |
 
 ---
 
@@ -114,6 +116,24 @@ Increase context for complex questions:
 ```bash
 he talk ./output/ -q "Explain the War of Currents" -n 10
 ```
+
+---
+
+## Scoped chat
+
+Restrict generated answers to a subset of sources with `--source` (specific source documents) or `--tag` (any source carrying the tag — set tags with [`he tag`](tag.md)), the same filters as [`he search`](search.md):
+
+```bash
+# Only answer from sources tagged `legal`
+he talk ./ka/ -q "What are the termination conditions?" --tag legal
+
+# Only answer from two specific documents
+he talk ./ka/ -q "What are the termination conditions?" --source contract-2024 --source annex-b
+```
+
+`--source` and `--tag` combine as a union: a key matches when **any** of its contributing sources fits either filter. Interactive mode (`-i`) keeps the same scope on every turn.
+
+> Scoping requires the KA to have been fed with `--source`, so the source ledger exists — see [Source Attribution & Provenance](../../python/guides/provenance.md). Types without a ledger (for example AutoList / AutoModel) reject `--source` / `--tag` with a scoped-chat error.
 
 ---
 

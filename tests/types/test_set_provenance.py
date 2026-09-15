@@ -64,6 +64,23 @@ class TestSourceRecording:
         other.build_index()
         assert other.search("Apple", top_k=5, source_ids=["d1"]) == []
 
+    def test_chat_forwards_scope_to_search(self, ka):
+        from langchain_core.messages import AIMessage
+        from langchain_core.runnables import RunnableLambda
+
+        seen = {}
+
+        def _spy(query, top_k=3, **kwargs):
+            seen["source_ids"] = kwargs.get("source_ids")
+            seen["tags"] = kwargs.get("tags")
+            return []
+
+        ka.search = _spy
+        ka.llm_client = RunnableLambda(lambda _: AIMessage(content="ok"))
+        ka.chat("q", source_ids=["s1"], tags=["t1"])
+        assert seen["source_ids"] == ["s1"]
+        assert seen["tags"] == ["t1"]
+
 
 class TestTagsAndRollback:
     def test_tag_round_trip(self, ka):

@@ -119,6 +119,18 @@ response = result.chat(
 )
 ```
 
+### 范围限定对话
+
+`ka.chat()` 接受与 `search()` 相同的可选参数 `source_ids` / `tags`。图谱类型会把它们转发给 `search_nodes` / `search_edges`。`search()` 签名里带这两个名字的类型（document / set / 图谱家族）会遵守范围；AutoList / AutoModel 会忽略它们，而不是抛出 `TypeError`。
+
+```python
+response = result.chat(
+    "终止条件是什么？",
+    source_ids=["contract-2024"],
+    tags=["legal"],
+)
+```
+
 ### 聊天用例
 
 ```python
