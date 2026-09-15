@@ -63,7 +63,7 @@ BINARY_GRAPH_TYPES = frozenset(
 )
 TEMPORAL_TYPES = frozenset({"temporal_graph", "spatio_temporal_graph"})
 SPATIAL_TYPES = frozenset({"spatial_graph", "spatio_temporal_graph"})
-RECORD_TYPES = frozenset({"model", "list", "set"})
+RECORD_TYPES = frozenset({"model", "list", "set", "document"})
 
 FIELD_COUNT_LIMIT = 5
 _PLACEHOLDER_RE = re.compile(r"\{(\w+)\}")

@@ -69,6 +69,24 @@ class TestTemplateValidateCli:
         assert result.exit_code == 0
         assert "OK" in result.output
 
+    def test_document_graph_output_exits_one_with_he_t002(self, tmp_path):
+        path = _write(
+            tmp_path,
+            VALID_GRAPH.replace("type: graph", "type: document").replace(
+                "name: ValidGraph", "name: BadDocument"
+            ),
+        )
+        result = runner.invoke(app, ["template", "validate", str(path)])
+        assert result.exit_code == 1
+        assert "HE-T002" in result.output
+        assert "output.fields" in result.output
+
+    def test_base_document_preset_is_clean(self):
+        path = PRESETS_DIR / "general" / "base_document.yaml"
+        result = runner.invoke(app, ["template", "validate", str(path)])
+        assert result.exit_code == 0, result.output
+        assert "OK" in result.output
+
     def test_identifier_error_exits_one(self, tmp_path):
         path = _write(
             tmp_path, VALID_GRAPH.replace("entity_id: name", "entity_id: nope")

@@ -159,6 +159,11 @@ class TestValidTemplates:
         assert result.ok
         assert result.diagnostics == []
 
+    def test_gallery_base_document_has_no_errors(self):
+        result = validate_template(PRESETS_DIR / "general" / "base_document.yaml")
+        assert result.ok
+        assert not any(d.severity == "error" for d in result.diagnostics)
+
 
 class TestStructureErrors:
     def test_invalid_yaml(self, tmp_path):
@@ -170,6 +175,41 @@ class TestStructureErrors:
     def test_invalid_schema_type(self, tmp_path):
         path = _write(tmp_path, VALID_GRAPH.replace("type: graph", "type: graphh"))
         result = validate_template(path)
+        assert not result.ok
+        assert HE_T002 in _codes(result)
+
+    def test_document_with_graph_output_is_he_t002(self, tmp_path):
+        yaml_text = VALID_GRAPH.replace("type: graph", "type: document").replace(
+            "name: ValidGraph", "name: BadDocument"
+        )
+        result = validate_template(_write(tmp_path, yaml_text))
+        assert not result.ok
+        diags = _by_code(result, HE_T002)
+        assert diags
+        assert any("output.fields" in d.message for d in diags)
+
+    def test_document_with_only_entities_is_he_t002(self, tmp_path):
+        yaml_text = """
+language: en
+name: EntitiesOnlyDocument
+type: document
+tags: [test]
+description: document with a graph entities block
+output:
+  description: wrong shape
+  entities:
+    description: entities
+    fields:
+      - name: name
+        type: str
+        description: entity name
+guideline:
+  target: Extract
+  rules: Keep names
+display:
+  label: '{name}'
+"""
+        result = validate_template(_write(tmp_path, yaml_text))
         assert not result.ok
         assert HE_T002 in _codes(result)
 
