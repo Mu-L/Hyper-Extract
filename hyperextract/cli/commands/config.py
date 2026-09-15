@@ -12,6 +12,15 @@ from ..config import ConfigManager
 logger = get_logger("he.config")
 console = Console()
 
+
+def _preset_embedder_model(preset: dict) -> str | None:
+    """Return a usable default embedder model, or None for LLM-only presets."""
+    model = preset.get("default_embedder")
+    if isinstance(model, str) and model.strip():
+        return model
+    return None
+
+
 app = typer.Typer(
     name="config",
     help="Manage LLM and Embedder configuration",
@@ -304,7 +313,7 @@ def init(
 
         preset = PROVIDER_PRESETS.get(provider, {})
         llm_model = preset.get("default_llm") or "gpt-4o-mini"
-        emb_model = preset.get("default_embedder") or "text-embedding-3-small"
+        emb_model = _preset_embedder_model(preset)
         preset_url = preset.get("base_url") or ""
         resolved_base = base_url or preset_url
 
@@ -323,7 +332,9 @@ def init(
             )
         else:
             console.print(
-                f"[yellow]Warning: Provider '{provider}' has no default embedder. Please configure embedder separately.[/yellow]"
+                f"[yellow]Warning: Provider '{provider}' has no default embedder. "
+                "Please configure embedder separately: "
+                "he config embedder -p openai -k … (or vLLM).[/yellow]"
             )
 
         console.print("[bold green]Configuration saved successfully![/bold green]")
@@ -390,7 +401,7 @@ def init(
     preset = PROVIDER_PRESETS.get(selected, {})
     preset_url = preset.get("base_url") or ""
     default_llm = preset.get("default_llm") or "gpt-4o-mini"
-    default_emb = preset.get("default_embedder") or "text-embedding-3-small"
+    default_emb = _preset_embedder_model(preset)
 
     console.print()
     console.print(f"[bold]Step 2: LLM Configuration (Provider: {selected})[/bold]")
@@ -435,11 +446,37 @@ def init(
     console.print("[bold]Step 3: Embedder Configuration[/bold]")
 
     if selected == "vllm":
+        emb_provider = selected
         emb_model = console.input("  Embedder Model (e.g. bge-m3): ").strip()
         emb_base_url = console.input(
             "  Embedder Base URL (e.g. http://localhost:8001/v1): "
         ).strip()
+    elif default_emb is None:
+        console.print(
+            f"  [yellow]Provider '{selected}' has no default embedder. "
+            "Configure an OpenAI-compatible embedder separately "
+            "(default provider: openai).[/yellow]"
+        )
+        emb_provider = (
+            console.input("  Embedder provider (default: openai): ").strip() or "openai"
+        )
+        emb_preset = PROVIDER_PRESETS.get(emb_provider, {})
+        emb_default_model = (
+            _preset_embedder_model(emb_preset) or "text-embedding-3-small"
+        )
+        emb_preset_url = emb_preset.get("base_url") or ""
+        emb_model = (
+            console.input(f"  Model (default: {emb_default_model}): ").strip()
+            or emb_default_model
+        )
+        emb_base_url = (
+            console.input(
+                f"  Base URL (default: {emb_preset_url}, press Enter to skip): "
+            ).strip()
+            or emb_preset_url
+        )
     else:
+        emb_provider = selected
         emb_model = (
             console.input(f"  Model (default: {default_emb}): ").strip() or default_emb
         )
@@ -463,7 +500,7 @@ def init(
             )
 
     config.set_embedder(
-        provider=selected,
+        provider=emb_provider,
         model=emb_model,
         api_key=emb_api_key,
         base_url=emb_base_url or None,

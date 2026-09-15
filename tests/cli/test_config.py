@@ -137,6 +137,8 @@ def test_load_warns_when_everyone_can_read(tmp_path, caplog):
     assert caplog.records
     assert any("Everyone" in record.getMessage() for record in caplog.records)
     assert _FAKE_API_KEY not in caplog.text
+
+
 def test_cli_provider_tables_are_library_presets():
     """CLI must not keep a drifting copy of library provider tables."""
     from hyperextract.cli import config as cli_config
@@ -205,3 +207,103 @@ def test_get_llm_config_reads_google_env_key(tmp_path, monkeypatch):
 
     assert cfg.api_key == "sk-google-from-env"
     assert cfg.base_url == ""
+
+
+def _isolate_default_config(tmp_path, monkeypatch):
+    """Point ConfigManager() at a temp toml so CLI init never touches ~/.he."""
+    cfg_path = tmp_path / "config.toml"
+    monkeypatch.setattr("hyperextract.cli.config.DEFAULT_CONFIG_FILE", cfg_path)
+    return cfg_path
+
+
+def _read_init_toml(cfg_path):
+    import tomllib
+
+    with open(cfg_path, "rb") as f:
+        return tomllib.load(f)
+
+
+@pytest.mark.parametrize("provider", ["google", "anthropic", "deepseek"])
+def test_quick_init_llm_only_provider_does_not_write_same_provider_embedder(
+    tmp_path, monkeypatch, provider
+):
+    """Quick init must not copy an LLM-only provider onto embedder.provider."""
+    from typer.testing import CliRunner
+
+    from hyperextract.cli.cli import app
+    from hyperextract.utils.client import PROVIDER_PRESETS
+
+    cfg_path = _isolate_default_config(tmp_path, monkeypatch)
+    runner = CliRunner()
+    result = runner.invoke(app, ["config", "init", "-p", provider, "-k", _FAKE_API_KEY])
+
+    assert result.exit_code == 0, result.output
+    assert "no default embedder" in result.output
+    assert "he config embedder" in result.output
+
+    data = _read_init_toml(cfg_path)
+    assert data["llm"]["provider"] == provider
+    assert data["llm"]["model"] == PROVIDER_PRESETS[provider]["default_llm"]
+    assert data["llm"]["api_key"] == _FAKE_API_KEY
+    assert data["embedder"].get("provider") != provider
+    assert data["embedder"].get("api_key") in ("", None)
+
+
+def test_quick_init_openai_still_writes_same_provider_embedder(tmp_path, monkeypatch):
+    """Providers with a real default_embedder still share the LLM provider."""
+    from typer.testing import CliRunner
+
+    from hyperextract.cli.cli import app
+
+    cfg_path = _isolate_default_config(tmp_path, monkeypatch)
+    runner = CliRunner()
+    result = runner.invoke(app, ["config", "init", "-p", "openai", "-k", _FAKE_API_KEY])
+
+    assert result.exit_code == 0, result.output
+    data = _read_init_toml(cfg_path)
+    assert data["llm"]["provider"] == "openai"
+    assert data["embedder"]["provider"] == "openai"
+    assert data["embedder"]["model"] == "text-embedding-3-small"
+    assert data["embedder"]["api_key"] == _FAKE_API_KEY
+
+
+def test_interactive_init_llm_only_prompts_separate_openai_embedder(
+    tmp_path, monkeypatch
+):
+    """Interactive Google init must not keep embedder.provider == google."""
+    from hyperextract.cli.commands import config as config_cmd
+
+    cfg_path = _isolate_default_config(tmp_path, monkeypatch)
+    answers = iter(
+        [
+            "6",  # google in the interactive provider list
+            "",  # default LLM model
+            "",  # default LLM base URL
+            _FAKE_API_KEY,
+            "",  # default embedder provider (openai)
+            "",  # default embedder model
+            "",  # default embedder base URL
+            "sk-emb",
+        ]
+    )
+    monkeypatch.setattr(config_cmd.console, "input", lambda _prompt="": next(answers))
+
+    config_cmd.init(provider=None, api_key=None, base_url=None)
+
+    data = _read_init_toml(cfg_path)
+    assert data["llm"]["provider"] == "google"
+    assert data["llm"]["model"] == "gemini-3.8-flash"
+    assert data["embedder"]["provider"] == "openai"
+    assert data["embedder"]["model"] == "text-embedding-3-small"
+    assert data["embedder"]["api_key"] == "sk-emb"
+
+
+def test_legacy_broken_google_embedder_still_fails_create_embedder():
+    """Lock the create_embedder guard so a leftover google embedder still fails."""
+    from hyperextract.utils.client import create_embedder
+
+    with pytest.raises(ValueError, match="embed"):
+        create_embedder(
+            {"provider": "google", "model": "text-embedding-3-small"},
+            api_key=_FAKE_API_KEY,
+        )
