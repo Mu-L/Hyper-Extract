@@ -146,9 +146,13 @@ cat document.md | he parse - -t general/biography_graph -o ./output/ -l zh
 │   ├── created_at     # 创建时间戳
 │   └── updated_at     # 最后更新时间戳
 └── index/             # 向量搜索索引（如已构建）
-    ├── index.faiss
-    └── docstore.json
 ```
+
+索引文件取决于 Auto-Type：
+
+**AutoModel / AutoList**（自 v0.10.1 起为无 pickle 的 JSON）：`index/index.json`。
+
+**图谱家族 / AutoSet / AutoDocument**（仍由 OMem 落盘）：`index/index.faiss` + `index/docstore.json`。
 
 ---
 

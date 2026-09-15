@@ -105,18 +105,30 @@ he build-index ./ka/ -f
 
 ## 索引存储
 
-索引存储在知识库目录中：
+索引存储在知识库目录中。布局取决于 Auto-Type：
+
+**AutoModel / AutoList**（自 v0.10.1 起为无 pickle 的 JSON）：
 
 ```
 ./ka/
 ├── data.json
 ├── metadata.json
-└── index/              # 索引目录
+└── index/
+    └── index.json      # 向量 + 文档，无 pickle
+```
+
+**图谱家族 / AutoSet / AutoDocument**（仍由 OMem 落盘，不是 v0.10.1 的 JSON 路径）：
+
+```
+./ka/
+├── data.json
+├── metadata.json
+└── index/
     ├── index.faiss     # FAISS 向量索引
     └── docstore.json   # 文档存储映射
 ```
 
-请只加载自己生成或完全信任的知识库目录中的 `index/`。自 v0.10.1 起索引为 JSON（加载安全）；旧版 pickle 索引（<= v0.10.0）加载时会反序列化——用 `--force` 重建即可迁移。
+请只加载自己生成或完全信任的知识库目录中的 `index/`。对 AutoModel / AutoList，v0.10.1+ 写入 `index.json` 并在加载时不执行代码；<= v0.10.0 残留的 `index.faiss` / `index.pkl` 加载时仍会反序列化——用 `--force` 重建即可迁移。图谱 / set / document 索引仍走 OMem，因此这条信任警告仍然成立。
 
 ---
 

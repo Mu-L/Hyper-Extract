@@ -29,6 +29,18 @@ result.dump("./my_ka/")
 
 ### 保存结构
 
+**AutoModel / AutoList**（自 v0.10.1 起为无 pickle 的 JSON）：
+
+```
+./my_ka/
+├── data.json          # 提取的知识
+├── metadata.json      # 提取信息
+└── index/             # 搜索索引（如已构建）
+    └── index.json     # 向量 + 文档，无 pickle
+```
+
+**图谱家族 / AutoSet / AutoDocument**（仍由 OMem 落盘，不是 v0.10.1 的 JSON 路径）：
+
 ```
 ./my_ka/
 ├── data.json          # 提取的知识
@@ -53,7 +65,7 @@ result.dump("./my_ka/")
 ## 加载知识库
 
 !!! warning "只加载受信任的目录"
-    自 v0.10.1 起，索引以 JSON（`index.json`）存储，加载时不执行任何代码。旧版本（<= v0.10.0）的 KA 仍是 pickle 索引，加载时会反序列化——请只对自己生成或完全信任的知识库目录调用 `load()`（以及会加载 KA 的 CLI/MCP 命令）。用 `he build-index --force` 重建即可迁移旧 KA。
+    请只对自己生成或完全信任的知识库目录调用 `load()`（以及会加载 KA 的 CLI/MCP 命令）。自 v0.10.1 起，**AutoModel / AutoList** 的索引以 JSON（`index.json`）存储，加载时不执行任何代码。旧版 model/list KA（<= v0.10.0）仍是 pickle 索引（`index.faiss` / `index.pkl`），加载时会反序列化——用 `he build-index --force` 重建即可迁移。图谱 / set / document 仍由 OMem 落盘，不走 v0.10.1 的 JSON 路径，因此这条信任警告仍然成立。
 
 ### 基本加载
 

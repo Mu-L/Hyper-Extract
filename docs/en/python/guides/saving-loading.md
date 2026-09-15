@@ -30,6 +30,18 @@ result.dump("./my_ka/")
 
 ### Save Structure
 
+**AutoModel / AutoList** (pickle-free JSON since v0.10.1):
+
+```
+./my_ka/
+├── data.json          # Extracted knowledge
+├── metadata.json      # Extraction info
+└── index/             # Search index (if built)
+    └── index.json     # vectors + documents, no pickle
+```
+
+**Graph family / AutoSet / AutoDocument** (still OMem — not the v0.10.1 JSON path):
+
 ```
 ./my_ka/
 ├── data.json          # Extracted knowledge
@@ -54,7 +66,7 @@ result.dump("./my_ka/")
 ## Loading Knowledge Abstracts
 
 !!! warning "Trusted directories only"
-    Since v0.10.1, indexes are stored as JSON (`index.json`) and load without code execution. Legacy KAs (<= v0.10.0) keep pickle-based indexes, which ARE deserialized on load — only call `load()` (or CLI/MCP commands that load a KA) on directories you generated yourself or fully trust. Rebuild with `he build-index --force` to migrate a legacy KA.
+    Only call `load()` (or CLI/MCP commands that load a KA) on directories you generated yourself or fully trust. Since v0.10.1, **AutoModel / AutoList** indexes are stored as JSON (`index.json`) and load without code execution. Legacy model/list KAs (<= v0.10.0) keep pickle-based indexes (`index.faiss` / `index.pkl`), which ARE deserialized on load — rebuild with `he build-index --force` to migrate. Graph / set / document KAs still persist through OMem and are not on the v0.10.1 JSON path, so the same trust warning still applies.
 
 ### Basic Load
 

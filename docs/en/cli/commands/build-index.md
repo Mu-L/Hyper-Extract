@@ -105,18 +105,30 @@ he build-index ./ka/ -f
 
 ## Index Storage
 
-The index is stored in the knowledge abstract directory:
+The index is stored in the knowledge abstract directory. Layout depends on the Auto-Type:
+
+**AutoModel / AutoList** (pickle-free JSON since v0.10.1):
 
 ```
 ./ka/
 ├── data.json
 ├── metadata.json
-└── index/              # Index directory
+└── index/
+    └── index.json      # vectors + documents, no pickle
+```
+
+**Graph family / AutoSet / AutoDocument** (still OMem — not the v0.10.1 JSON path):
+
+```
+./ka/
+├── data.json
+├── metadata.json
+└── index/
     ├── index.faiss     # FAISS vector index
     └── docstore.json   # Document store mapping
 ```
 
-Load an existing `index/` only from Knowledge Abstract directories you created or fully trust. Since v0.10.1 indexes are JSON (safe to load); legacy pickle indexes (<= v0.10.0) are deserialized on load — rebuild with `--force` to migrate.
+Load an existing `index/` only from Knowledge Abstract directories you created or fully trust. For AutoModel / AutoList, v0.10.1+ writes `index.json` and loads it without executing code; leftover `index.faiss` / `index.pkl` from <= v0.10.0 still deserialize on load — rebuild with `--force` to migrate. Graph / set / document indexes stay on OMem, so the trust warning still applies.
 
 ---
 

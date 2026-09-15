@@ -151,9 +151,13 @@ cat document.md | he parse - -t general/biography_graph -o ./output/ -l en
 │   ├── created_at     # Creation timestamp
 │   └── updated_at     # Last update timestamp
 └── index/             # Vector search index (if built)
-    ├── index.faiss
-    └── docstore.json
 ```
+
+Index files depend on the Auto-Type:
+
+**AutoModel / AutoList** (pickle-free JSON since v0.10.1): `index/index.json`.
+
+**Graph family / AutoSet / AutoDocument** (still OMem): `index/index.faiss` + `index/docstore.json`.
 
 ---
 
