@@ -138,6 +138,20 @@ class TestCLINoVerboseFlag:
         assert "hyperedge" in result.output
         assert "pairwise" in result.output
 
+    def test_bare_he_banner_lists_jsonld_and_cypher_exports(self):
+        """No-arg banner and `he export --help` both list JSON-LD and Cypher."""
+        banner = runner.invoke(app, [])
+        assert banner.exit_code == 0, banner.output
+        assert "he export jsonld" in banner.output
+        assert "he export cypher" in banner.output
+        assert "JSON-LD" in banner.output
+        assert "Cypher" in banner.output
+
+        export_help = runner.invoke(app, ["export", "--help"])
+        assert export_help.exit_code == 0, export_help.output
+        assert "jsonld" in export_help.output
+        assert "cypher" in export_help.output
+
     def test_info_missing_ka_exits_with_error(self):
         """he info <nonexistent> exits with error."""
         result = runner.invoke(app, ["info", "/nonexistent/path"])

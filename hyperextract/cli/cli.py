@@ -151,6 +151,14 @@ def main(
                         "he export csv <ka_path> -o <dir>",
                         "Export nodes/edges as CSV tables",
                     ),
+                    (
+                        "he export jsonld <ka_path> -o <file>",
+                        "Export pairwise graph to JSON-LD",
+                    ),
+                    (
+                        "he export cypher <ka_path> -o <file>",
+                        "Export graph to Cypher MERGE script",
+                    ),
                 ],
             ),
             make_section(
