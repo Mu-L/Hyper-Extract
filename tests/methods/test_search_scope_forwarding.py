@@ -79,6 +79,23 @@ class TestCogRagScope:
         assert calls["edges"] == {"source_ids": ["s1"], "tags": ["t1"]}
         assert calls["nodes"] == {"source_ids": ["s1"], "tags": ["t1"]}
 
+    def test_chat_forwards_scope_to_search(self):
+        cog = Cog_RAG.__new__(Cog_RAG)
+        seen = {}
+
+        def _search(query, top_k_themes=3, top_k_entities=3, **kwargs):
+            seen["kwargs"] = kwargs
+            return {"themes": [], "entities": []}
+
+        cog.search = _search
+        from langchain_core.runnables import RunnableLambda
+
+        cog.llm = RunnableLambda(lambda _: "ok")
+
+        cog.chat("q", source_ids=["s1"], tags=["t1"])
+
+        assert seen["kwargs"] == {"source_ids": ["s1"], "tags": ["t1"]}
+
     def test_cog_rag_uses_hypergraph_layers(self):
         """ThemeSchema participates in the theme layer's hyperedge schema."""
         assert issubclass(ThemeSchema, object)

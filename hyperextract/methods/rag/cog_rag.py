@@ -429,9 +429,23 @@ class Cog_RAG:
 
         return {"themes": themes, "entities": entities}
 
-    def chat(self, query: str, top_k_themes: int = 3, top_k_entities: int = 3):
+    def chat(
+        self,
+        query: str,
+        top_k_themes: int = 3,
+        top_k_entities: int = 3,
+        *,
+        source_ids: list[str] | None = None,
+        tags: list[str] | None = None,
+    ):
         """Generate an answer using context from both layers."""
-        results = self.search(query, top_k_themes, top_k_entities)
+        results = self.search(
+            query,
+            top_k_themes,
+            top_k_entities,
+            source_ids=source_ids,
+            tags=tags,
+        )
 
         context_parts = []
         if results["themes"]:
