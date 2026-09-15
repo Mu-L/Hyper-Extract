@@ -21,6 +21,9 @@ python providers/deepseek_demo.py
 # Anthropic
 python providers/anthropic_demo.py
 
+# Google Gemini
+python providers/google_demo.py
+
 # OrcaRouter
 python providers/orcarouter_demo.py
 
@@ -50,6 +53,7 @@ examples/
 │   ├── bailian_demo.py         # Bailian (Alibaba Cloud) setup
 │   ├── deepseek_demo.py        # DeepSeek setup
 │   ├── anthropic_demo.py       # Anthropic setup
+│   ├── google_demo.py          # Google Gemini setup
 │   ├── orcarouter_demo.py      # OrcaRouter setup
 │   └── vllm_demo.py            # Local vLLM setup
 ├── en/                          # English demos

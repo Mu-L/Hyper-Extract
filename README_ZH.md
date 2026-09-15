@@ -83,7 +83,7 @@ he config embedder -p vllm -u http://localhost:8001/v1 -k dummy -m BAAI/bge-m3
 ```
 
 <details>
-<summary><b>更多 provider</b> — Anthropic (Claude)、阿里云百炼、OrcaRouter…</summary>
+<summary><b>更多 provider</b> — Anthropic (Claude)、Google Gemini、阿里云百炼、OrcaRouter…</summary>
 <br>
 
 ```bash
@@ -91,11 +91,15 @@ he config embedder -p vllm -u http://localhost:8001/v1 -k dummy -m BAAI/bge-m3
 he config llm -p anthropic -k YOUR_ANTHROPIC_API_KEY
 he config embedder -p openai -k YOUR_OPENAI_API_KEY
 
+# Google Gemini —— 仅 LLM（默认：gemini-3.8-flash）
+he config llm -p google -k YOUR_GOOGLE_API_KEY
+he config embedder -p openai -k YOUR_OPENAI_API_KEY
+
 # 百炼（阿里云，Qwen，一个 key 同时提供 LLM 和 embedding）
 he config init -p bailian -k YOUR_BAILIAN_API_KEY
 ```
 
-> OpenAI 和百炼同时提供 LLM 和 embedding 模型；Anthropic 和 DeepSeek 仅提供 LLM（需搭配 OpenAI 兼容 embedder）。DeepSeek 最经济（约 $0.001-0.005/页）。
+> OpenAI 和百炼同时提供 LLM 和 embedding 模型；Anthropic、Google Gemini 和 DeepSeek 仅提供 LLM（需搭配 OpenAI 兼容 embedder）。DeepSeek 最经济（约 $0.001-0.005/页）。
 
 </details>
 
@@ -243,6 +247,7 @@ Hyper-Extract 通过 LangChain 结构化输出的 **function calling** 方法工
 |----------|-----------------|
 | **OpenAI** | gpt-4o, gpt-4o-mini, gpt-5 |
 | **Anthropic** | claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5 |
+| **Google Gemini** | gemini-3.8-flash |
 | **DeepSeek** | deepseek-v4-flash, deepseek-v4-pro |
 | **阿里云百炼** | qwen-plus, qwen-turbo, deepseek-r1 |
 | **本地 vLLM** | Qwen3.5-9B (GPTQ-Marlin) |
@@ -250,7 +255,7 @@ Hyper-Extract 通过 LangChain 结构化输出的 **function calling** 方法工
 **嵌入模型**（语义搜索）支持任意 OpenAI 兼容端点：`text-embedding-3-small`、`text-embedding-v4`（百炼）、`bge-m3`（本地 vLLM）。
 
 <details>
-<summary><b>Provider 说明</b> — DeepSeek 与 Anthropic 的搭配方式</summary>
+<summary><b>Provider 说明</b> — DeepSeek、Anthropic 与 Gemini 的搭配方式</summary>
 <br>
 
 > **DeepSeek：** V4 模型默认开启 "thinking" 模式，Hyper-Extract 会自动关闭以保证结构化抽取可用。设置 `DEEPSEEK_API_KEY`。DeepSeek 没有嵌入接口：
@@ -265,6 +270,13 @@ Hyper-Extract 通过 LangChain 结构化输出的 **function calling** 方法工
 > ```python
 > from hyperextract import create_client
 > llm, emb = create_client(llm="anthropic", embedder="openai:text-embedding-3-small")
+> ```
+
+> **Google Gemini：** Gemini 仅用于 **LLM**（设置 `GOOGLE_API_KEY` 或 `GEMINI_API_KEY`，额外依赖：`pip install 'hyperextract[google]'`）。默认模型为 `gemini-3.8-flash`。本仓库没有成熟的 embedder 路径：
+>
+> ```python
+> from hyperextract import create_client
+> llm, emb = create_client(llm="google", embedder="openai:text-embedding-3-small")
 > ```
 
 </details>

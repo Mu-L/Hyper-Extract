@@ -83,7 +83,7 @@ he config embedder -p vllm -u http://localhost:8001/v1 -k dummy -m BAAI/bge-m3
 ```
 
 <details>
-<summary><b>More providers</b> — Anthropic (Claude), Alibaba Bailian, OrcaRouter…</summary>
+<summary><b>More providers</b> — Anthropic (Claude), Google Gemini, Alibaba Bailian, OrcaRouter…</summary>
 <br>
 
 ```bash
@@ -91,11 +91,15 @@ he config embedder -p vllm -u http://localhost:8001/v1 -k dummy -m BAAI/bge-m3
 he config llm -p anthropic -k YOUR_ANTHROPIC_API_KEY
 he config embedder -p openai -k YOUR_OPENAI_API_KEY
 
+# Google Gemini — LLM only (default: gemini-3.8-flash)
+he config llm -p google -k YOUR_GOOGLE_API_KEY
+he config embedder -p openai -k YOUR_OPENAI_API_KEY
+
 # Alibaba Bailian (Qwen, LLM + embeddings in one key)
 he config init -p bailian -k YOUR_BAILIAN_API_KEY
 ```
 
-> OpenAI and Bailian provide both LLM and embedding models in one API. Anthropic and DeepSeek are LLM-only (pair them with an OpenAI-compatible embedder). DeepSeek is the most cost-effective option (~$0.001-0.005/page).
+> OpenAI and Bailian provide both LLM and embedding models in one API. Anthropic, Google Gemini, and DeepSeek are LLM-only (pair them with an OpenAI-compatible embedder). DeepSeek is the most cost-effective option (~$0.001-0.005/page).
 
 </details>
 
@@ -243,6 +247,7 @@ Hyper-Extract uses LangChain structured output with **function calling**. The mo
 |----------|-----------------|
 | **OpenAI** | gpt-4o, gpt-4o-mini, gpt-5 |
 | **Anthropic** | claude-opus-4-8, claude-sonnet-4-6, claude-haiku-4-5 |
+| **Google Gemini** | gemini-3.8-flash |
 | **DeepSeek** | deepseek-v4-flash, deepseek-v4-pro |
 | **阿里云百炼** | qwen-plus, qwen-turbo, deepseek-r1 |
 | **Local vLLM** | Qwen3.5-9B (GPTQ-Marlin) |
@@ -250,7 +255,7 @@ Hyper-Extract uses LangChain structured output with **function calling**. The mo
 **Embedding models** (semantic search) work with any OpenAI-compatible endpoint: `text-embedding-3-small`, `text-embedding-v4` (Bailian), `bge-m3` (local vLLM).
 
 <details>
-<summary><b>Provider notes</b> — DeepSeek & Anthropic pairing</summary>
+<summary><b>Provider notes</b> — DeepSeek, Anthropic & Gemini pairing</summary>
 <br>
 
 > **DeepSeek:** V4 models default to "thinking" mode, which Hyper-Extract auto-disables so structured extraction works. Set `DEEPSEEK_API_KEY`. DeepSeek has no embeddings API:
@@ -265,6 +270,13 @@ Hyper-Extract uses LangChain structured output with **function calling**. The mo
 > ```python
 > from hyperextract import create_client
 > llm, emb = create_client(llm="anthropic", embedder="openai:text-embedding-3-small")
+> ```
+
+> **Google Gemini:** Gemini is used for the **LLM** (set `GOOGLE_API_KEY` or `GEMINI_API_KEY`, extra: `pip install 'hyperextract[google]'`). Default model is `gemini-3.8-flash`. No mature embedder path in this repo:
+>
+> ```python
+> from hyperextract import create_client
+> llm, emb = create_client(llm="google", embedder="openai:text-embedding-3-small")
 > ```
 
 </details>

@@ -21,6 +21,9 @@ python providers/deepseek_demo.py
 # Anthropic
 python providers/anthropic_demo.py
 
+# Google Gemini
+python providers/google_demo.py
+
 # OrcaRouter
 python providers/orcarouter_demo.py
 
@@ -51,6 +54,7 @@ examples/
 │   ├── bailian_demo.py         # 百炼（阿里云）配置
 │   ├── deepseek_demo.py        # DeepSeek 配置
 │   ├── anthropic_demo.py       # Anthropic 配置
+│   ├── google_demo.py          # Google Gemini 配置
 │   ├── orcarouter_demo.py      # OrcaRouter 配置
 │   └── vllm_demo.py            # 本地 vLLM 配置
 ├── en/                          # 英文演示
