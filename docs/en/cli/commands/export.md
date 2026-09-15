@@ -170,17 +170,20 @@ he export graphml ./tesla_kb/ -o ./tesla.graphml
 ## he export jsonld
 
 Export a knowledge graph to JSON-LD (stdlib `json`, no RDFLib). Binary edges are `@type: Edge` with `source` / `target`. Edges with three or more endpoints are `@type: Hyperedge` with an `endpoint` list in extractor order (never sorted). 0/1-endpoint or missing-endpoint edges are skipped with a warning, same as GraphML.
-## he export cypher
-
-Export a Neo4j / Memgraph-compatible Cypher MERGE script (`cypher-shell < file.cypher`). Binary edges become relationships (`:REL`, or a legal `type`/`label` ident). Edges with three or more endpoints become `(:Hyperedge)` nodes plus `(n)-[:IN]->(h)` in extractor order — never a pairwise clique. 0/1-endpoint or missing-endpoint edges are skipped with a warning.
 
 Existing non-empty output files require `--force` / `-f`.
 
 ### Synopsis
 
 ```bash
-he export jsonld KA_PATH -o FILE.jsonld [--force]
+he export jsonld KA_PATH -o FILE.jsonld
 ```
+
+### Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `KA_PATH` | Path to the knowledge abstract directory (created by `he parse`) |
 
 ### Options
 
@@ -194,8 +197,34 @@ he export jsonld KA_PATH -o FILE.jsonld [--force]
 ```bash
 he export jsonld ./tesla_kb/ -o ./tesla.jsonld
 he export jsonld ./tesla_kb/ -o ./tesla.jsonld --force
-he export cypher KA_PATH -o FILE.cypher [--force]
 ```
+
+---
+
+## he export cypher
+
+Export a Neo4j / Memgraph-compatible Cypher MERGE script (`cypher-shell < file.cypher`). Binary edges become relationships (`:REL`, or a legal `type`/`label` ident). Edges with three or more endpoints become `(:Hyperedge)` nodes plus `(n)-[:IN]->(h)` in extractor order — never a pairwise clique. 0/1-endpoint or missing-endpoint edges are skipped with a warning.
+
+Existing non-empty output files require `--force` / `-f`.
+
+### Synopsis
+
+```bash
+he export cypher KA_PATH -o FILE.cypher
+```
+
+### Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `KA_PATH` | Path to the knowledge abstract directory (created by `he parse`) |
+
+### Options
+
+| Option | Alias | Default | Description |
+|--------|-------|---------|-------------|
+| `--output` | `-o` | *(required)* | Output Cypher file |
+| `--force` | `-f` | off | Overwrite an existing non-empty file |
 
 ### Examples
 
@@ -256,7 +285,7 @@ he export csv ./tesla_kb/ -o ./tesla_csv/ --force
 
 ## Python API
 
-The same capability is available on graph Auto-Types for Obsidian, and as standalone functions for GraphML / CSV / JSON-LD (they are not methods on AutoType):
+The same capability is available on graph Auto-Types for Obsidian, and as standalone functions for GraphML / CSV / JSON-LD / Cypher (they are not methods on AutoType):
 
 ```python
 ka.export_obsidian("./tesla_vault/", vault_name="Tesla KB", overwrite=True)
@@ -286,12 +315,17 @@ export_to_csv(
 )
 
 export_to_jsonld(
-export_to_cypher(
     ka.nodes,
     ka.edges,
     node_id_extractor=ka.node_key_extractor,
     incident_nodes_extractor=ka.nodes_in_edge_extractor,
     file_path="./tesla.jsonld",
+)
+export_to_cypher(
+    ka.nodes,
+    ka.edges,
+    node_id_extractor=ka.node_key_extractor,
+    incident_nodes_extractor=ka.nodes_in_edge_extractor,
     file_path="./tesla.cypher",
 )
 ```
