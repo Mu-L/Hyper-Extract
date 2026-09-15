@@ -351,6 +351,7 @@ for name, info in methods.items():
 
 ## See Also
 
+- [Choosing a method: baseline vs structured](choosing-a-method.md)
 - [Using Methods Guide](../python/guides/using-methods.md)
 - [Templates](../templates/index.md)
 - [Auto-Types](autotypes.md)

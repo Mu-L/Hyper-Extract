@@ -118,6 +118,7 @@ plugins:
                 - concepts/provider-system.md
                 - concepts/autotypes.md
                 - concepts/methods.md
+                - concepts/choosing-a-method.md
                 - concepts/templates-format.md
             - Templates:
                 - templates/index.md
@@ -218,6 +219,7 @@ plugins:
                 - zh/concepts/provider-system.md
                 - zh/concepts/autotypes.md
                 - zh/concepts/methods.md
+                - zh/concepts/choosing-a-method.md
                 - zh/concepts/templates-format.md
             - 模板库:
                 - zh/templates/index.md

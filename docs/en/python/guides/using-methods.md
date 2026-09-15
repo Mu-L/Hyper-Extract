@@ -285,4 +285,5 @@ for name, info in methods.items():
 
 **Reference:**
 - [Methods Concept Doc](../../concepts/methods.md) — Detailed algorithm explanations
+- [Choosing a method: baseline vs structured](../../concepts/choosing-a-method.md) — When chunks suffice vs when graph extraction pays off
 - [Template Library](../../templates/index.md) — Browse existing templates

@@ -325,6 +325,7 @@ for name, info in methods.items():
 
 ## 另请参见
 
+- [选择方法：基线 vs 结构化抽取](choosing-a-method.md)
 - [使用方法指南](../python/guides/using-methods.md)
 - [模板](../templates/index.md)
 - [自动类型](autotypes.md)

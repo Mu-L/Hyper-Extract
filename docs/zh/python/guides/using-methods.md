@@ -285,4 +285,5 @@ for name, info in methods.items():
 
 **参考：**
 - [方法概念文档](../../concepts/methods.md) — 详细算法解释
+- [选择方法：基线 vs 结构化抽取](../../concepts/choosing-a-method.md) — 何时只用 chunks，何时值得做图谱抽取
 - [模板库](../../templates/index.md) — 浏览现有模板
