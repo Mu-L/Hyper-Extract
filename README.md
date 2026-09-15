@@ -354,7 +354,7 @@ identifiers:
 
 ## 📰 What's New
 
-**v0.10.1** — 🔒 Pickle-free index storage: `AutoModel`/`AutoList` indexes are JSON now — legacy pickle indexes still load with a warning (`he build-index --force` migrates). *(#116)*
+**v0.10.2** — 💬 Scoped chat (`he talk --source/--tag`) · 📖 method-selection guide + chunk vs graph comparison example · 🐛 observation-context persistence, MCP stdio crash & config-init fixes · 🏗️ GraphIndexMixin refactor.
 
 📰 **[Full release notes](https://yifanfeng97.github.io/Hyper-Extract/latest/news/)** · [All releases](https://github.com/yifanfeng97/hyper-extract/releases)
 

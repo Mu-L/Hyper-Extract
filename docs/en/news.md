@@ -4,6 +4,16 @@ Release notes and highlights. For a complete changelog, see the [GitHub releases
 
 ---
 
+## v0.10.2 — Scoped Chat, Method Guide & Persistence Fixes
+
+- **💬 Scoped chat** — `he talk --source/--tag` (and `ka.chat`) narrow the context to attributed/tagged documents, with capability detection for non-tracked types. *(#161, #160)*
+- **📖 Choosing a method** — new "baseline vs structured" guide plus a side-by-side `chunk_rag` vs `graph_rag` example on the same corpus, with cost/latency comparison. *(#162, #163 — first two steps of #117)*
+- **🏗️ Internal** — `GraphIndexMixin` extracts the shared merge/index/search surface of graph & hypergraph (−168 lines). *(#145)*
+- **🐛 Fixes** — temporal/spatial observation context now survives dump/load (was silently lost); MCP load failures return as tool results instead of crashing the stdio session; `he config init` no longer writes a broken same-provider embedder for LLM-only providers; `Cog_RAG.chat` forwards `source_ids`/`tags`; `he list --lang zh` keeps method templates; document templates get output-shape validation; CLI banner lists jsonld/cypher. *(#167, #169, #165, #171, #159, #173, #155)*
+- **📚 Docs** — resolved leftover conflict markers in MCP docs; unsmashed JSON-LD/Cypher sections; type-aware index-layout notes; Gemini provider guide. *(#149, #151, #153, #157)*
+
+---
+
 ## v0.10.1 — Pickle-Free Index Storage
 
 - **🔒 Safe index format** — `AutoModel`/`AutoList` indexes are now stored as JSON (`index.json`: vectors + documents) and rebuilt in memory on load — **no pickle, no code execution**. Legacy pickle indexes (<= v0.10.0) still load with a deserialization warning; `he build-index --force` migrates them. *(#116)*

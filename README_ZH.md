@@ -354,7 +354,7 @@ identifiers:
 
 ## 📰 最新动态
 
-**v0.10.1** — 🔒 Pickle-free index storage: `AutoModel`/`AutoList` indexes are JSON now — legacy pickle indexes still load with a warning (`he build-index --force` migrates). *(#116)*
+**v0.10.2** — 💬 范围对话（`he talk --source/--tag`）· 📖 方法选型指南 + chunk vs graph 对比示例 · 🐛 observation 持久化、MCP stdio 崩溃与 config init 修复 · 🏗️ GraphIndexMixin 重构。
 
 📰 **[完整版本说明](https://yifanfeng97.github.io/Hyper-Extract/latest/zh/news/)** · [全部 Releases](https://github.com/yifanfeng97/hyper-extract/releases)
 

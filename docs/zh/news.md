@@ -4,6 +4,16 @@
 
 ---
 
+## v0.10.2 — 范围对话、方法选型指南与持久化修复
+
+- **💬 范围对话** — `he talk --source/--tag`（及 `ka.chat`）可将上下文限定在已标注/打标签的文档内，对不支持的类型自动能力探测。*(#161, #160)*
+- **📖 方法选型** — 新增"基线 vs 结构化"选型指南，以及同语料 `chunk_rag` vs `graph_rag` 的并排对比示例（含成本/延迟）。*(#162, #163 —— #117 的前两步)*
+- **🏗️ 内部改进** — `GraphIndexMixin` 抽取 graph/hypergraph 共享的合并/索引/检索面（净删 168 行）。*(#145)*
+- **🐛 修复** — 时空图谱 observation 上下文现在能跨 dump/load 保留（此前静默丢失）；MCP 加载失败以工具结果返回，不再炸掉 stdio 会话；`he config init` 不再为纯 LLM provider 写入同源坏嵌入器；`Cog_RAG.chat` 透传 `source_ids`/`tags`；`he list --lang zh` 保留方法模板；document 模板增加输出结构校验；CLI banner 列出 jsonld/cypher。*(#167, #169, #165, #171, #159, #173, #155)*
+- **📚 文档** — 解决 MCP 文档残留冲突标记；JSON-LD/Cypher 章节排版修复；索引布局说明按类型区分；Gemini provider 指南。*(#149, #151, #153, #157)*
+
+---
+
 ## v0.10.1 — 索引存储脱离 pickle
 
 - **🔒 安全的索引格式** — `AutoModel`/`AutoList` 的索引改为 JSON 存储（`index.json`：向量 + 文档），加载时在内存中重建——**没有 pickle，不执行任何代码**。旧 pickle 索引（<= v0.10.0）仍可加载但会给出警告；`he build-index --force` 即可迁移。*(#116)*
