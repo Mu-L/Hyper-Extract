@@ -83,12 +83,15 @@ def export_to_cypher(
     dest.parent.mkdir(parents=True, exist_ok=True)
 
     by_id = resolve_nodes(nodes, node_id_extractor)
-    lines: list[str] = []
+    # One ``;``-terminated statement per node / edge: cypher-shell splits on
+    # ``;`` and Cypher refuses to re-declare a variable within one statement.
+    statements: list[str] = []
     for node_id, node in by_id.items():
-        lines.append(f"MERGE (n:Node {{id: {_cypher_str(node_id)}}})")
+        clauses = [f"MERGE (n:Node {{id: {_cypher_str(node_id)}}})"]
         assignments = _set_assignments("n", scalar_fields(node))
         if assignments:
-            lines.append(f"SET {assignments}")
+            clauses.append(f"SET {assignments}")
+        statements.append(_statement(clauses))
 
     skipped = 0
     pairwise = 0
@@ -119,26 +122,30 @@ def export_to_cypher(
         if len(members) == 2:
             rel_type = _relationship_type(fields)
             source, target = members[0], members[1]
-            lines.append(f"MERGE (a:Node {{id: {_cypher_str(source)}}})")
-            lines.append(f"MERGE (b:Node {{id: {_cypher_str(target)}}})")
-            lines.append(
-                f"MERGE (a)-[r:{rel_type} {{id: {_cypher_str(edge_id)}}}]->(b)"
-            )
+            clauses = [
+                f"MERGE (a:Node {{id: {_cypher_str(source)}}})",
+                f"MERGE (b:Node {{id: {_cypher_str(target)}}})",
+                f"MERGE (a)-[r:{rel_type} {{id: {_cypher_str(edge_id)}}}]->(b)",
+            ]
             assignments = _set_assignments("r", fields)
             if assignments:
-                lines.append(f"SET {assignments}")
+                clauses.append(f"SET {assignments}")
+            statements.append(_statement(clauses))
             pairwise += 1
             continue
-        lines.append(f"MERGE (h:Hyperedge {{id: {_cypher_str(edge_id)}}})")
+        clauses = [f"MERGE (h:Hyperedge {{id: {_cypher_str(edge_id)}}})"]
         assignments = _set_assignments("h", fields)
         if assignments:
-            lines.append(f"SET {assignments}")
-        for member in members:
-            lines.append(f"MERGE (n:Node {{id: {_cypher_str(member)}}})")
-            lines.append("MERGE (n)-[:IN]->(h)")
+            clauses.append(f"SET {assignments}")
+        for position, member in enumerate(members):
+            clauses.append(f"MERGE (n{position}:Node {{id: {_cypher_str(member)}}})")
+            clauses.append(f"MERGE (n{position})-[:IN]->(h)")
+        statements.append(_statement(clauses))
         hyper += 1
 
-    dest.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
+    dest.write_text(
+        "\n".join(statements) + ("\n" if statements else ""), encoding="utf-8"
+    )
     logger.info(
         "cypher: exported nodes=%d edges=%d hyperedges=%d skipped_edges=%d path=%s",
         len(by_id),
@@ -148,6 +155,10 @@ def export_to_cypher(
         dest,
     )
     return dest
+
+
+def _statement(clauses: list[str]) -> str:
+    return "\n".join(clauses) + ";"
 
 
 def _cypher_str(value: Any) -> str:
