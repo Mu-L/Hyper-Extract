@@ -284,7 +284,7 @@ class AutoModel(BaseAutoType[T]):
             return []
 
         if self._index is None:
-            raise Exception("Index is not built, please build the index first.")
+            raise ValueError("Index not built. Call build_index() first.")
 
         docs = self._index.similarity_search(query, k=top_k)
 

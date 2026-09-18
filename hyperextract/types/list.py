@@ -292,7 +292,7 @@ class AutoList(BaseAutoType[AutoListSchema[ItemSchema]], Generic[ItemSchema]):
             return []
 
         if self._index is None:
-            raise Exception("Vector store not initialized")
+            raise ValueError("Index not built. Call build_index() first.")
 
         docs = self._index.similarity_search(query, k=top_k)
         results: list[ItemSchema] = []
