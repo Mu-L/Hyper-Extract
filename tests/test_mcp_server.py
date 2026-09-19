@@ -11,7 +11,7 @@ import pytest
 from pydantic import BaseModel, Field
 
 from hyperextract import mcp_server
-from hyperextract.types import AutoGraph
+from hyperextract.types import AutoGraph, AutoList, AutoModel
 from tests.mocks import MockChatModel, MockEmbeddings
 
 
@@ -225,6 +225,33 @@ def test_search_without_index_is_handled(monkeypatch):
     out = mcp_server.search("x", "anything")
     assert "Cannot search" in out
     assert "build-index" in out
+
+
+@pytest.mark.parametrize("kind", ["list", "model"])
+def test_search_and_ask_without_index_is_handled_for_list_and_model(
+    monkeypatch, kind
+):
+    """AutoList/AutoModel must surface the same build-index hint as graphs."""
+
+    class Item(BaseModel):
+        name: str
+
+    if kind == "list":
+        ka = AutoList(
+            item_schema=Item, llm_client=MockChatModel(), embedder=MockEmbeddings()
+        )
+        ka.append(Item(name="Apple"))
+    else:
+        ka = AutoModel(
+            data_schema=Item, llm_client=MockChatModel(), embedder=MockEmbeddings()
+        )
+        ka._data = Item(name="Apple")
+    monkeypatch.setattr(mcp_server, "_load_ka", lambda p: ka)
+
+    out = mcp_server.search("x", "anything")
+    assert "Cannot search" in out and "build-index" in out
+    out = mcp_server.ask("x", "anything")
+    assert "Cannot answer" in out and "build-index" in out
 
 
 class _StubKA:
