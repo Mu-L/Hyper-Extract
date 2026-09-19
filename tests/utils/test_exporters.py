@@ -6,6 +6,7 @@ mock ``Template.create`` / ``load`` against a dumped KA directory.
 
 import csv
 import json
+import re
 import xml.etree.ElementTree as ET
 from typing import List, Optional
 from unittest.mock import patch
@@ -880,20 +881,13 @@ class TestCypherExport:
         assert ":Hyperedge" in text
         assert "[:IN]" in text
         assert text.count("[:IN]") == 3
-        in_order = [
-            line
-            for line in text.splitlines()
-            if "[:IN]" in line or "MERGE (n:Node {id:" in line
-        ]
         member_ids = [
             line.split('id: "')[1].split('"')[0]
-            for line in in_order
-            if "MERGE (n:Node {id:" in line
-            and "Hyperedge" not in line
-            and line.split('id: "')[1].split('"')[0] in {"A", "B", "C"}
+            for line in text.splitlines()
+            if re.match(r'MERGE \(n\d+:Node \{id: "', line)
         ]
         # Membership MERGEs after the Hyperedge, in extractor order C, A, B
-        assert member_ids[-3:] == ["C", "A", "B"]
+        assert member_ids == ["C", "A", "B"]
         assert "-[:REL]" not in text
         assert not any(
             pair in text
@@ -903,6 +897,35 @@ class TestCypherExport:
                 '(a)-[r:REL {id: "C-B"}]',
             )
         )
+
+    def test_statements_are_terminated_and_variables_unique(self, tmp_path):
+        """cypher-shell splits on ``;`` and Cypher rejects re-declaring a
+        variable inside one statement, so every node/edge must be its own
+        ``;``-terminated statement with no duplicate MERGE variable."""
+        nodes = [Entity(name="A"), Entity(name="B"), Entity(name="C")]
+        edges = [
+            Relation(source="A", target="B", relation_type="knows"),
+            Event(label="meeting", participants=["A", "B", "C"]),
+        ]
+        path = export_to_cypher(
+            nodes,
+            edges,
+            node_id_extractor=lambda n: n.name,
+            incident_nodes_extractor=lambda e: (
+                (e.source, e.target)
+                if isinstance(e, Relation)
+                else tuple(e.participants)
+            ),
+            file_path=tmp_path / "g.cypher",
+        )
+        text = path.read_text(encoding="utf-8")
+        statements = [s.strip() for s in text.split(";") if s.strip()]
+        assert text.rstrip().endswith(";")
+        # 3 nodes + 1 relationship + 1 hyperedge
+        assert len(statements) == 5
+        for statement in statements:
+            declared = re.findall(r"MERGE \((\w+)[:{]", statement)
+            assert len(declared) == len(set(declared)), statement
 
     def test_escapes_backslash_and_quote(self, tmp_path):
         nodes = [Entity(name='say "hi"\\')]
