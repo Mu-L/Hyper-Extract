@@ -354,7 +354,7 @@ identifiers:
 
 ## 📰 最新动态
 
-**v0.10.2** — 💬 范围对话（`he talk --source/--tag`）· 📖 方法选型指南 + chunk vs graph 对比示例 · 🐛 observation 持久化、MCP stdio 崩溃与 config init 修复 · 🏗️ GraphIndexMixin 重构。
+**v0.10.3** — 🐛 Cypher 导出修复：正确的 `;` 语句终结与唯一 MERGE 变量——Neo4j/Memgraph 导入真正可用了。
 
 📰 **[完整版本说明](https://yifanfeng97.github.io/Hyper-Extract/latest/zh/news/)** · [全部 Releases](https://github.com/yifanfeng97/hyper-extract/releases)
 

@@ -4,6 +4,13 @@ Release notes and highlights. For a complete changelog, see the [GitHub releases
 
 ---
 
+## v0.10.3 — Working Cypher Export
+
+- **🐛 Cypher export fixed** — `he export cypher` output could not be imported by Neo4j/Memgraph: statements lacked `;` terminators (cypher-shell read the whole file as one query) and variables were re-declared within a single statement (`Variable 'n' already declared` from the second node on). Each node/edge/hyperedge is now its own `;`-terminated statement, and hyperedge members use positional aliases (`n0`, `n1`, …). *(#174)*
+- **🧹 Consistency** — `AutoList`/`AutoModel` raise the standard `ValueError` build-index hint instead of a bare `Exception`. *(#175)*
+
+---
+
 ## v0.10.2 — Scoped Chat, Method Guide & Persistence Fixes
 
 - **💬 Scoped chat** — `he talk --source/--tag` (and `ka.chat`) narrow the context to attributed/tagged documents, with capability detection for non-tracked types. *(#161, #160)*

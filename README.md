@@ -354,7 +354,7 @@ identifiers:
 
 ## 📰 What's New
 
-**v0.10.2** — 💬 Scoped chat (`he talk --source/--tag`) · 📖 method-selection guide + chunk vs graph comparison example · 🐛 observation-context persistence, MCP stdio crash & config-init fixes · 🏗️ GraphIndexMixin refactor.
+**v0.10.3** — 🐛 Cypher export fixed: proper `;`-terminated statements and unique MERGE variables — Neo4j/Memgraph imports now actually work.
 
 📰 **[Full release notes](https://yifanfeng97.github.io/Hyper-Extract/latest/news/)** · [All releases](https://github.com/yifanfeng97/hyper-extract/releases)
 
