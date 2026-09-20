@@ -139,7 +139,8 @@ def info(ka_path: str, include_sources: bool = False) -> str:
     data = json.loads(data_file.read_text(encoding="utf-8"))
     chunks = 0
     if isinstance(data, dict):
-        nodes = len(data.get("nodes", data.get("entities", [])))
+        # list/set KAs store "items"; docs define Nodes as entities/items
+        nodes = len(data.get("nodes", data.get("entities", data.get("items", []))))
         edges = len(data.get("edges", data.get("relations", [])))
         chunks = len(data.get("chunks", []))
     elif isinstance(data, list):
