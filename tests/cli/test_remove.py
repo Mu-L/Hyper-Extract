@@ -246,6 +246,48 @@ class TestDocumentRollbackCli:
         assert "Nothing matched" in result.output
 
 
+class TestPurgeDocuments:
+    @staticmethod
+    def _ka_with_archive(tmp_path, monkeypatch):
+        from hyperextract.utils.document_store import SourceDocumentStore
+
+        g = _real_ka()
+        g.metadata["template"] = "general/graph"
+        g.metadata["lang"] = "en"
+        g._node_memory.add([E(name="Apple")])
+        g.feed_text("Apple partners with DeepMind on AI research.", source_id="doc-1")
+        ka = tmp_path / "ka"
+        g.dump(ka)
+        archived = SourceDocumentStore(ka).store_text(
+            "doc-1", "Apple partners with DeepMind on AI research.", "doc1.md"
+        )
+        monkeypatch.setattr(climod.Template, "create", staticmethod(lambda *a, **k: g))
+        return ka, archived
+
+    def test_dry_run_does_not_purge_archived_document(self, tmp_path, monkeypatch):
+        ka, archived = self._ka_with_archive(tmp_path, monkeypatch)
+
+        result = runner.invoke(
+            app,
+            ["remove", str(ka), "--document", "doc-1", "--purge-documents", "--dry-run", "-y"],
+        )
+
+        assert result.exit_code == 0, result.output
+        assert "Dry run" in result.output
+        assert archived.exists()
+
+    def test_purge_deletes_archived_document_on_apply(self, tmp_path, monkeypatch):
+        ka, archived = self._ka_with_archive(tmp_path, monkeypatch)
+
+        result = runner.invoke(
+            app, ["remove", str(ka), "--document", "doc-1", "--purge-documents", "-y"]
+        )
+
+        assert result.exit_code == 0, result.output
+        assert "Archived document deleted" in result.output
+        assert not archived.exists()
+
+
 class TestDocumentRollbackStrategies:
     @staticmethod
     def _strategy_ka(tmp_path, monkeypatch):
