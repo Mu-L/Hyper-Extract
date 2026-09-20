@@ -1752,13 +1752,6 @@ def remove_items(
 
     console.print()
     if document:
-        if purge_documents:
-            from hyperextract.utils.document_store import SourceDocumentStore
-
-            removed_files = SourceDocumentStore(path).purge(document)
-            for f in removed_files:
-                console.print(f"[dim]Archived document deleted: {f}[/dim]")
-
         table = Table(title=f"Document Rollback Report — {document}")
         table.add_column("Field")
         table.add_column("Items")
@@ -1831,6 +1824,14 @@ def remove_items(
         console.print(f"[dim]Backup written: {backup_path}[/dim]")
 
     ka.dump(path)
+
+    # Only after the dry-run gate: purging is destructive and must never run
+    # on a preview.
+    if document and purge_documents:
+        from hyperextract.utils.document_store import SourceDocumentStore
+
+        for f in SourceDocumentStore(path).purge(document):
+            console.print(f"[dim]Archived document deleted: {f}[/dim]")
 
     if report.get("index_patched", False):
         # The vector index was patched in place and persisted by dump() —
