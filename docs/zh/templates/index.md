@@ -147,4 +147,4 @@ result = ka.parse(text)
 
 需要特定功能？学习创建自己的模板：
 
-→ [自定义模板指南](../../python/guides/custom-templates.md)
+→ [自定义模板指南](../python/guides/custom-templates.md)

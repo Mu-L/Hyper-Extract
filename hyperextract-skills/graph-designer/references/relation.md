@@ -1,6 +1,6 @@
 # Relation Design Reference
 
-Relation design patterns for graph types. See [SKILL.md](SKILL.md) for workflow.
+Relation design patterns for graph types. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 

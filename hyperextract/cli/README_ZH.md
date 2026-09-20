@@ -281,6 +281,6 @@ he search --help
 
 ## 📚 了解更多
 
-- [完整文档](../README.md)
+- [完整文档](../../README.md)
 - [模板库](../templates/)
-- [示例](../examples/)
+- [示例](../../examples/)

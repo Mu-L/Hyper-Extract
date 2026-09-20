@@ -1,6 +1,6 @@
 # Syntax Validation Rules
 
-Syntax validation for YAML configurations. See [SKILL.md](SKILL.md) for workflow.
+Syntax validation for YAML configurations. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 

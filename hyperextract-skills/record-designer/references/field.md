@@ -1,6 +1,6 @@
 # Field Design Reference
 
-Field design patterns for record types. See [SKILL.md](SKILL.md) for workflow.
+Field design patterns for record types. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 

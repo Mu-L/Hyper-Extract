@@ -1,6 +1,6 @@
 # Type-Specific Validation Rules
 
-Type-specific validation for YAML configurations. See [SKILL.md](SKILL.md) for workflow.
+Type-specific validation for YAML configurations. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 

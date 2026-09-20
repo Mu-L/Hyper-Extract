@@ -1,6 +1,6 @@
 # Identifier Design Reference
 
-Identifier configuration for record types. See [SKILL.md](SKILL.md) for workflow.
+Identifier configuration for record types. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 

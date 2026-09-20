@@ -1,6 +1,6 @@
 # Hypergraph Design Reference
 
-Hypergraph design patterns for graph types. See [SKILL.md](SKILL.md) for workflow.
+Hypergraph design patterns for graph types. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 

@@ -1,6 +1,6 @@
 # Identifier Validation Rules
 
-Identifier configuration validation. See [SKILL.md](SKILL.md) for workflow.
+Identifier configuration validation. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 
