@@ -63,3 +63,24 @@ class TestInfoSourcesCli:
 
         assert result.exit_code == 0, result.output
         assert "No source ledger" in result.output
+
+
+class TestInfoItemCounts:
+    def test_list_ka_counts_items_as_nodes(self, tmp_path):
+        """List/Set KAs store ``items``; ``Nodes`` is documented as entities/items."""
+        ka = tmp_path / "ka"
+        ka.mkdir()
+        (ka / "data.json").write_text(
+            json.dumps({"items": [{"name": "a"}, {"name": "b"}, {"name": "c"}]}),
+            encoding="utf-8",
+        )
+        (ka / "metadata.json").write_text(
+            json.dumps({"template": "general/base_list", "lang": "en"}),
+            encoding="utf-8",
+        )
+        result = runner.invoke(app, ["info", str(ka)])
+        assert result.exit_code == 0, result.output
+        nodes_line = next(
+            line for line in result.output.splitlines() if line.strip().startswith("Nodes")
+        )
+        assert nodes_line.split()[-1] == "3"
