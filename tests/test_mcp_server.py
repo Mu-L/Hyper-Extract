@@ -343,6 +343,23 @@ def test_export_csv_rejects_non_graph_with_same_message(monkeypatch, tmp_path):
     assert "graph-type knowledge abstracts" in graphml
 
 
+@pytest.mark.parametrize(
+    "tool", ["export_graphml", "export_jsonld", "export_cypher"]
+)
+def test_export_to_directory_returns_message(monkeypatch, tmp_path, tool):
+    """A directory destination is a tool string here, as in `he export` — MCP
+    tools never raise."""
+    g = _graph_with_index()
+    monkeypatch.setattr(mcp_server, "_load_ka", lambda p: g)
+    dest = tmp_path / "out"
+    dest.mkdir()
+
+    out = getattr(mcp_server, tool)("x", str(dest))
+
+    assert "is a directory" in out
+    assert "file path" in out
+
+
 def test_export_cypher(monkeypatch, tmp_path):
     g = _graph_with_index()
     monkeypatch.setattr(mcp_server, "_load_ka", lambda p: g)
