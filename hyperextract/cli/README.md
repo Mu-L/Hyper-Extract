@@ -281,6 +281,6 @@ he search --help
 
 ## 📚 Learn More
 
-- [Full Documentation](../README.md)
+- [Full Documentation](../../README.md)
 - [Template Gallery](../templates/)
-- [Examples](../examples/)
+- [Examples](../../examples/)

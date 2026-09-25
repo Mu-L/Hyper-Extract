@@ -1,6 +1,6 @@
 # Entity Design Reference
 
-Entity design patterns for graph types. See [SKILL.md](SKILL.md) for workflow.
+Entity design patterns for graph types. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 

@@ -1,6 +1,6 @@
 # Dimension Design Reference
 
-Time and space dimension patterns. See [SKILL.md](SKILL.md) for workflow.
+Time and space dimension patterns. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 

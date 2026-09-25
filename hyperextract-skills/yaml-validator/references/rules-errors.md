@@ -1,6 +1,6 @@
 # Common Error Patterns
 
-Common YAML configuration errors and fixes. See [SKILL.md](SKILL.md) for workflow.
+Common YAML configuration errors and fixes. See [SKILL.md](../SKILL.md) for workflow.
 
 ---
 
