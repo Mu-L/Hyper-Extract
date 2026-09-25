@@ -65,6 +65,7 @@ class AutoModel(BaseAutoType[T]):
         chunk_overlap: int = 256,
         max_workers: int = 10,
         verbose: bool = False,
+        on_error: str = "skip",
         **kwargs,
     ):
         """Initialize AutoModel with schema and configuration.
@@ -100,6 +101,7 @@ class AutoModel(BaseAutoType[T]):
             chunk_overlap=chunk_overlap,
             max_workers=max_workers,
             verbose=verbose,
+            on_error=on_error,
             **kwargs,
         )
 

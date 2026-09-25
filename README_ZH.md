@@ -354,7 +354,7 @@ identifiers:
 
 ## 📰 最新动态
 
-**v0.10.3** — 🐛 Cypher 导出修复：正确的 `;` 语句终结与唯一 MERGE 变量——Neo4j/Memgraph 导入真正可用了。
+**v0.10.4** — 👁️ Chunk 抽取失败可见化（`ka.extraction_failures`，可选 `on_error="raise"`）· 🐛 超图增量喂入不再崩溃。
 
 📰 **[完整版本说明](https://yifanfeng97.github.io/Hyper-Extract/latest/zh/news/)** · [全部 Releases](https://github.com/yifanfeng97/hyper-extract/releases)
 

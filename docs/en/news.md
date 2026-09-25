@@ -4,6 +4,14 @@ Release notes and highlights. For a complete changelog, see the [GitHub releases
 
 ---
 
+## v0.10.4 — Visible Chunk Failures & Hypergraph Incremental Feed
+
+- **🐛 Hypergraph incremental feed fixed** — feeding a second document into an existing hypergraph KA crashed with `AttributeError: 'key_extractor'` (`_update_data_state` referenced a nonexistent attribute). Now uses `node_key_extractor`/`edge_key_extractor`.
+- **👁️ Chunk extraction failures are visible** — failed chunks were silently skipped with only a log line. Every `feed_text()`/`parse()` run now records them: read `ka.extraction_failures` (chunk index, stage, error). `he feed`/`he parse` print a warning when chunks were dropped.
+- **⚙️ `on_error` strategy** — new constructor option: `"skip"` (default, current behavior) or `"raise"` to abort a feed on the first failing chunk. Available on all AutoTypes.
+
+---
+
 ## v0.10.3 — Working Cypher Export
 
 - **🐛 Cypher export fixed** — `he export cypher` output could not be imported by Neo4j/Memgraph: statements lacked `;` terminators (cypher-shell read the whole file as one query) and variables were re-declared within a single statement (`Variable 'n' already declared` from the second node on). Each node/edge/hyperedge is now its own `;`-terminated statement, and hyperedge members use positional aliases (`n0`, `n1`, …). *(#174)*

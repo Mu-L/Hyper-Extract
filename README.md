@@ -354,7 +354,7 @@ identifiers:
 
 ## 📰 What's New
 
-**v0.10.3** — 🐛 Cypher export fixed: proper `;`-terminated statements and unique MERGE variables — Neo4j/Memgraph imports now actually work.
+**v0.10.4** — 👁️ Chunk extraction failures are now visible (`ka.extraction_failures`, optional `on_error="raise"`) · 🐛 Hypergraph incremental feed no longer crashes.
 
 📰 **[Full release notes](https://yifanfeng97.github.io/Hyper-Extract/latest/news/)** · [All releases](https://github.com/yifanfeng97/hyper-extract/releases)
 

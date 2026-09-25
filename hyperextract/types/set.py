@@ -111,6 +111,7 @@ class AutoSet(BaseAutoType[AutoSetSchema[ItemSchema]], Generic[ItemSchema]):
         chunk_overlap: int = 256,
         max_workers: int = 10,
         verbose: bool = False,
+        on_error: str = "skip",
         fields_for_index: list[str] | None = None,
         **kwargs: Any,
     ):
@@ -130,6 +131,7 @@ class AutoSet(BaseAutoType[AutoSetSchema[ItemSchema]], Generic[ItemSchema]):
             chunk_overlap: Overlapping characters between adjacent chunks.
             max_workers: Maximum concurrent extraction tasks.
             verbose: Whether to display detailed execution logs and progress information.
+            on_error: Per-chunk extraction failure strategy: ``"skip"`` (default) or ``"raise"``.
             fields_for_index: Optional list of field names in item_schema to include in vector index.
                              If None, all text fields are indexed by default.
                              Useful for optimizing search on complex schemas.
@@ -199,6 +201,7 @@ class AutoSet(BaseAutoType[AutoSetSchema[ItemSchema]], Generic[ItemSchema]):
             chunk_overlap=chunk_overlap,
             max_workers=max_workers,
             verbose=verbose,
+            on_error=on_error,
         )
 
     # ==================== Override Instance Creation ====================

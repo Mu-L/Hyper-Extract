@@ -4,6 +4,14 @@
 
 ---
 
+## v0.10.4 — Chunk 失败可见化与超图增量喂入修复
+
+- **🐛 超图增量喂入修复** — 向已有超图 KA 喂第二个文档时崩溃（`_update_data_state` 引用了不存在的 `key_extractor` 属性）。现改用 `node_key_extractor`/`edge_key_extractor`。
+- **👁️ Chunk 抽取失败可见** — 失败的 chunk 此前只留一行日志即被静默跳过。现在每次 `feed_text()`/`parse()` 都会记录失败明细：读取 `ka.extraction_failures`（chunk 序号、阶段、错误）。`he feed`/`he parse` 会在丢弃 chunk 时打印警告。
+- **⚙️ `on_error` 策略** — 新增构造参数：`"skip"`（默认，保持现有行为）或 `"raise"`（首个失败 chunk 即中止整个喂入）。所有 AutoType 均可用。
+
+---
+
 ## v0.10.3 — Cypher 导出可用了
 
 - **🐛 Cypher 导出修复** — `he export cypher` 的输出此前无法导入 Neo4j/Memgraph：语句缺少 `;` 结束符（cypher-shell 会把整个文件当成一条查询），且单条语句内变量重复声明（第二个节点起报 `Variable 'n' already declared`）。现在每个节点/边/超边都是独立的 `;` 结尾语句，超边成员使用位置别名（`n0`、`n1`…）。*(#174)*

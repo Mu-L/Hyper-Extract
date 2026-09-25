@@ -370,8 +370,15 @@ def parse(
 
             progress.update(task, description="Extracting knowledge...")
             logger.debug("stage=feed_text_invoked")
+            failed_chunks = 0
             for file_path, file_source, text in zip(text_files, file_sources, all_text):
                 ka.feed_text(text, source_id=file_source)
+                failed_chunks += len(getattr(ka, "extraction_failures", []))
+            if failed_chunks:
+                console.print(
+                    f"[yellow]Warning:[/yellow] {failed_chunks} chunk(s) failed "
+                    "extraction and were skipped."
+                )
             logger.info("stage=knowledge_extracted files=%d", len(text_files))
         else:
             progress.update(task, description="Reading input...")
@@ -386,6 +393,12 @@ def parse(
 
                 SourceDocumentStore(output_path).store_file(source, input)
             ka.feed_text(text, source_id=source)
+            failures = getattr(ka, "extraction_failures", [])
+            if failures:
+                console.print(
+                    f"[yellow]Warning:[/yellow] {len(failures)} chunk(s) failed "
+                    "extraction and were skipped."
+                )
             logger.info("stage=knowledge_extracted chars=%d", len(text))
 
         progress.update(task, description="Saving data...")

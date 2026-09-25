@@ -175,6 +175,7 @@ class AutoHypergraph(
         chunk_overlap: int = 256,
         max_workers: int = 10,
         verbose: bool = False,
+        on_error: str = "skip",
         node_fields_for_index: list[str] | None = None,
         edge_fields_for_index: list[str] | None = None,
         **kwargs: Any,
@@ -315,6 +316,7 @@ class AutoHypergraph(
             chunk_overlap=chunk_overlap,
             max_workers=max_workers,
             verbose=verbose,
+            on_error=on_error,
         )
 
         # Initialize prompts
@@ -422,10 +424,10 @@ class AutoHypergraph(
                 self._edge_memory.add(incoming_data.edges)
 
         if incoming_data.nodes:
-            node_keys = {self.key_extractor(n) for n in incoming_data.nodes}
+            node_keys = {self.node_key_extractor(n) for n in incoming_data.nodes}
             self._node_memory.sync_index(upserted_keys=node_keys)
         if incoming_data.edges:
-            edge_keys = {self.key_extractor(e) for e in incoming_data.edges}
+            edge_keys = {self.edge_key_extractor(e) for e in incoming_data.edges}
             self._edge_memory.sync_index(upserted_keys=edge_keys)
 
     @property

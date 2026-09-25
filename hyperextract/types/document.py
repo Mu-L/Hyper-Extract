@@ -71,6 +71,7 @@ class AutoDocument(BaseAutoType[DocumentData]):
         chunk_size: int = 2048,
         chunk_overlap: int = 256,
         verbose: bool = False,
+        on_error: str = "skip",
         **kwargs,
     ):
         """Initialize the document corpus.
@@ -93,6 +94,7 @@ class AutoDocument(BaseAutoType[DocumentData]):
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
             verbose=verbose,
+            on_error=on_error,
         )
 
     def _create_empty_instance(self) -> "AutoDocument":

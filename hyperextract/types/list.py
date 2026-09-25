@@ -79,6 +79,7 @@ class AutoList(BaseAutoType[AutoListSchema[ItemSchema]], Generic[ItemSchema]):
         chunk_overlap: int = 256,
         max_workers: int = 10,
         verbose: bool = False,
+        on_error: str = "skip",
         fields_for_index: list[str] | None = None,
     ):
         """Initialize AutoList with item schema and configuration.
@@ -127,6 +128,7 @@ class AutoList(BaseAutoType[AutoListSchema[ItemSchema]], Generic[ItemSchema]):
             chunk_overlap=chunk_overlap,
             max_workers=max_workers,
             verbose=verbose,
+            on_error=on_error,
         )
 
     def _default_prompt(self) -> str:

@@ -51,6 +51,7 @@ class BaseAutoType(ABC, Generic[T]):
         chunk_overlap: int = 256,
         max_workers: int = 10,
         verbose: bool = False,
+        on_error: str = "skip",
     ):
         """Initialize the knowledge object with schema and processing configuration.
 
@@ -63,6 +64,9 @@ class BaseAutoType(ABC, Generic[T]):
             chunk_overlap: Number of overlapping characters between chunks.
             max_workers: Maximum number of concurrent extraction tasks.
             verbose: Whether to display detailed execution logs and progress information.
+            on_error: Per-chunk extraction failure strategy: ``"skip"`` (default)
+                records the failure in ``extraction_failures`` and continues with
+                the surviving chunks; ``"raise"`` aborts the whole feed/parse.
         """
         self._data_schema = data_schema
         self.llm_client = llm_client
@@ -72,6 +76,9 @@ class BaseAutoType(ABC, Generic[T]):
         self.chunk_overlap = chunk_overlap
         self.max_workers = max_workers
         self.verbose = verbose
+        if on_error not in ("skip", "raise"):
+            raise ValueError(f"on_error must be 'skip' or 'raise' (got {on_error!r})")
+        self.on_error = on_error
 
         # Initialize template
         self.prompt_template = ChatPromptTemplate.from_template(self.prompt)
@@ -100,6 +107,9 @@ class BaseAutoType(ABC, Generic[T]):
         # Set by parse()/feed_text() while extraction runs; graph-family
         # subclasses record raw extraction results under it (provenance).
         self._pending_source_id: str | None = None
+        # Per-run chunk extraction failures: [{"chunk_index", "stage", "error"}].
+        # Reset at the start of each feed_text()/parse() run.
+        self._last_extraction_failures: list[dict[str, Any]] = []
 
     def _create_empty_instance(self) -> "BaseAutoType[T]":
         """Creates a new empty instance with the same configuration as this one.
@@ -128,6 +138,17 @@ class BaseAutoType(ABC, Generic[T]):
         """
 
     # ==================== Data Access Interface ====================
+
+    @property
+    def extraction_failures(self) -> list[dict[str, Any]]:
+        """Chunk extraction failures of the last feed_text()/parse() run.
+
+        One entry per failed chunk: ``{"chunk_index": int, "stage": str,
+        "error": str}``. Empty when every chunk succeeded (or nothing was
+        fed yet). Always populated — even with the default ``on_error="skip"``
+        strategy — so callers can detect silently dropped chunks.
+        """
+        return list(self._last_extraction_failures)
 
     @property
     def data_schema(self) -> type[T]:
@@ -356,7 +377,11 @@ class BaseAutoType(ABC, Generic[T]):
             return extractor.invoke(input)
         except Exception as e:
             logger.warning("stage=%s_single_extract_failed error=%s", stage, e)
-            return None
+            self._last_extraction_failures.append(
+                {"chunk_index": 0, "stage": stage, "error": str(e)}
+            )
+            if self.on_error == "raise":
+                raise
 
     def _batch_safe(self, extractor, inputs: list[dict], *, stage: str) -> list:
         """batch() with return_exceptions=True; per-chunk failures logged and nulled.
@@ -380,6 +405,11 @@ class BaseAutoType(ABC, Generic[T]):
                 logger.warning(
                     "stage=%s_chunk_extract_failed chunk_index=%d error=%s", stage, i, r
                 )
+                self._last_extraction_failures.append(
+                    {"chunk_index": i, "stage": stage, "error": str(r)}
+                )
+                if self.on_error == "raise":
+                    raise r
                 results.append(None)
             else:
                 results.append(r)
@@ -436,6 +466,7 @@ class BaseAutoType(ABC, Generic[T]):
             A new knowledge instance containing only the parsed data.
         """
         self._pending_source_id = source_id
+        self._last_extraction_failures = []
         try:
             parsed_data = self._extract_data(text)
         finally:
@@ -479,6 +510,7 @@ class BaseAutoType(ABC, Generic[T]):
         logger.debug("stage=feed_text_start input_chars=%d", len(text))
         self._pending_source_id = source_id
         self._pending_content_hash = content_hash
+        self._last_extraction_failures = []
         try:
             extracted_data = self._extract_data(text)
             logger.debug("stage=extract_done")
