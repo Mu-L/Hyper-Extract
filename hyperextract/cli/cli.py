@@ -1368,6 +1368,12 @@ def _feed_one_document(
 
     logger.debug("stage=feed_text_invoked")
     ka.feed_text(text, source_id=source, content_hash=text_hash_to_record)
+    failures = getattr(ka, "extraction_failures", [])
+    if failures:
+        console.print(
+            f"[yellow]Warning:[/yellow] {len(failures)} chunk(s) failed "
+            "extraction and were skipped."
+        )
     logger.info("stage=knowledge_appended chars=%d source=%s", len(text), source)
     return True
 
