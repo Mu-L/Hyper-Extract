@@ -321,6 +321,8 @@ def export_graphml(ka_path: str, output: str, overwrite: bool = False) -> str:
         return str(e)
     except FileExistsError as e:
         return f"{e} Pass overwrite=true to overwrite it."
+    except IsADirectoryError as e:
+        return str(e)
     return f"Wrote GraphML to {dest}"
 
 
@@ -377,6 +379,8 @@ def export_jsonld(ka_path: str, output: str, overwrite: bool = False) -> str:
         return str(e)
     except FileExistsError as e:
         return f"{e} Pass overwrite=true to overwrite it."
+    except IsADirectoryError as e:
+        return str(e)
     return f"Wrote JSON-LD to {dest}"
 
 
@@ -402,6 +406,8 @@ def export_cypher(ka_path: str, output: str, overwrite: bool = False) -> str:
         return str(e)
     except FileExistsError as e:
         return f"{e} Pass overwrite=true to overwrite it."
+    except IsADirectoryError as e:
+        return str(e)
     return f"Wrote Cypher to {dest}"
 
 
