@@ -92,6 +92,23 @@ def test_info_reports_counts(tmp_path):
     assert "sources" not in out
 
 
+def test_info_counts_items_for_list_and_set_kas(tmp_path):
+    """List/Set KAs store ``items`` rather than ``nodes``/``edges``."""
+    ka = tmp_path / "ka"
+    ka.mkdir()
+    (ka / "data.json").write_text(
+        json.dumps({"items": [{"name": "a"}, {"name": "b"}, {"name": "c"}]}),
+        encoding="utf-8",
+    )
+    (ka / "metadata.json").write_text(
+        json.dumps({"template": "general/base_list", "lang": "en"}), encoding="utf-8"
+    )
+
+    out = json.loads(mcp_server.info(str(ka)))
+    assert out["nodes"] == 3
+    assert out["edges"] == 0
+
+
 def test_info_includes_chunks_and_optional_sources(tmp_path):
     ka = tmp_path / "doc_ka"
     ka.mkdir()

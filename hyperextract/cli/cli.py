@@ -860,7 +860,8 @@ def info(
         data = json.load(f)
 
     if isinstance(data, dict):
-        node_count = len(data.get("nodes", data.get("entities", [])))
+        # list/set KAs store "items"; docs define Nodes as entities/items
+        node_count = len(data.get("nodes", data.get("entities", data.get("items", []))))
         edge_count = len(data.get("edges", data.get("relations", [])))
         chunk_count = len(data.get("chunks", []))
     elif isinstance(data, list):
