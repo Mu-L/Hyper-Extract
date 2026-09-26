@@ -90,6 +90,38 @@ class TestHypergraphSecondFeed:
         assert hits  # incremental feed is searchable
 
 
+class TestFeedCliWarning:
+    """``he feed`` must report dropped chunks, as ``he parse`` and the docs do."""
+
+    def test_feed_warns_when_chunks_fail(self, llm_client, embedder, tmp_path):
+        from typer.testing import CliRunner
+
+        import hyperextract.cli.cli as climod
+        from hyperextract.cli.cli import app
+
+        ka = _list_ka(llm_client, embedder)
+        ka.metadata["template"] = "general/list"
+        ka.metadata["lang"] = "en"
+        ka_dir = tmp_path / "ka"
+        ka.dump(ka_dir)
+        ka.data_extractor = _FlakyExtractor(ka.data_extractor, fail_indexes={1})
+        doc = tmp_path / "doc.md"
+        doc.write_text("chunk boundary filler. " * 300, encoding="utf-8")
+
+        import unittest.mock as mock
+
+        with (
+            mock.patch.object(
+                climod.Template, "create", staticmethod(lambda *a, **k: ka)
+            ),
+            mock.patch.object(climod, "validate_config", lambda: None),
+        ):
+            result = CliRunner().invoke(app, ["feed", str(ka_dir), str(doc)])
+
+        assert result.exit_code == 0, result.output
+        assert "chunk(s) failed" in result.output
+
+
 class TestExtractionFailures:
     def test_failures_collected_by_default(self, llm_client, embedder):
         ka = _list_ka(llm_client, embedder)
