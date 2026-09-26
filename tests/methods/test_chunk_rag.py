@@ -89,6 +89,25 @@ class TestCliOnDiskKA:
         assert template == "method/chunk_rag"
         assert lang == "en"
 
+    def test_unknown_method_template_names_the_method(self, ka_dir):
+        """An unregistered method must not be reported as a missing template."""
+        import json
+
+        from hyperextract.cli.utils import get_template_from_ka
+
+        meta_path = ka_dir / "metadata.json"
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
+        meta["template"] = "method/no_such_method"
+        meta_path.write_text(json.dumps(meta), encoding="utf-8")
+
+        with pytest.raises(ValueError) as excinfo:
+            get_template_from_ka(ka_dir)
+
+        message = str(excinfo.value)
+        assert "no_such_method" in message
+        assert "not specified" not in message
+        assert "No template specified" not in message
+
     def test_search_command_prints_chunks(self, ka_dir, llm_client, embedder):
         with (
             patch("hyperextract.cli.cli.validate_config"),

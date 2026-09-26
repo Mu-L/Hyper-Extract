@@ -259,8 +259,14 @@ def get_template_from_ka(ka_path: Path) -> tuple[str, str]:
             # Method templates are code-registered, not gallery YAML files.
             from hyperextract.methods.registry import get_method
 
-            if get_method(template[len("method/") :]) is not None:
+            method = template[len("method/") :]
+            if get_method(method) is not None:
                 return template, lang
+            raise ValueError(
+                f"Template '{template}' names an extraction method that is not "
+                f"registered ('{method}'). Run `he list` to see the available "
+                "methods."
+            )
         elif Gallery.get(template) is not None:
             return template, lang
         else:
